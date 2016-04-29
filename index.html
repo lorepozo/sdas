@@ -1,26 +1,77 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Graph Algorithm Computer</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
+
+
+    <!-- Load CSS Libraries -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- Load local CSS stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
     <div class="container">
-      <h2>Graph Algorithm Computer</h2>
+        <div class="row">
+            <h2>Graph Algorithm Computer</h2>
+        </div>
+        <hr>
+
+        <div class="row">
+            <div id="intro-text"></div>
+        </div>
+
+        <div class="row">
+            <div id="algorithm-area">
+
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose algorithm
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">HTML</a></li>
+                        <li><a href="#">CSS</a></li>
+                        <li><a href="#">JavaScript</a></li>
+                    </ul>
+                </div>
+
+                <div class="form-group">
+                    <label for="comment">Algorithm</label>
+                    <textarea class="form-control" rows="10" id="comment"></textarea>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="graph-area"></div>
+        </div>
     </div>
+
+
+
+
+
+    <!-- Biwascheme text
     <script>
-      var x = new XMLHttpRequest();
-      x.open("GET", "main.scm", true);
-      x.onload = function() {
+        var x = new XMLHttpRequest();
+        x.open("GET", "scheme/main.scm", true);
+        x.onload = function() {
         var head = document.getElementsByTagName('head')[0];
         var script = document.createElement('script');
         script.innerHTML = this.responseText;;
-        script.src = "biwascheme.js";
+        script.src = "js/biwascheme.js";
         script.id = "scmcontainer";
         head.appendChild(script);
-      }
-      x.send();
-    </script>
-  </body>
+        }
+        x.send();
+    </script> -->
+
+    <!-- Load JS Libraries -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/d3.min.js"></script>
+
+    <!-- Load local JS files -->
+
+</body>
 </html>
