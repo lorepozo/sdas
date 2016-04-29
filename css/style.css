@@ -1,4 +1,4 @@
-h2 {
+h2, h3 {
     text-align : center;
 }
 
@@ -9,4 +9,28 @@ hr {
 
 .form-group {
     margin-top : 20px;
+}
+
+.dropdown{
+    display : inline;
+}
+
+.integer-input {
+    width : 50px;
+    display : inline;
+    text-align: right;
+}
+
+svg {
+    border-style: solid;
+    margin-bottom: 10px;
+
+}
+
+circle {
+    stroke-width : 2px;
+}
+
+.node text {
+    font: 10px sans-serif;
 }

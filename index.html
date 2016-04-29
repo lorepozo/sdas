@@ -22,32 +22,49 @@
         </div>
 
         <div class="row">
-            <div id="algorithm-area">
-
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose algorithm
-                        <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">HTML</a></li>
-                        <li><a href="#">CSS</a></li>
-                        <li><a href="#">JavaScript</a></li>
-                    </ul>
-                </div>
-
+            <div class="col-lg-7 col-md-7 col-sm-7">
                 <div class="form-group">
                     <label for="comment">Algorithm</label>
                     <textarea class="form-control" rows="10" id="comment"></textarea>
                 </div>
-
             </div>
         </div>
 
         <div class="row">
-            <div id="graph-area"></div>
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <button type="button" class="btn btn-primary">Compute</button>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose algorithm
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">BFS</a></li>
+                        <li><a href="#">DFS</a></li>
+                        <li><a href="#">A*</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <h3>Generate graph</h3>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div id="graph-drawing"></div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2">
+                <button type="button" class="btn btn-primary" id="addNodeButton">Add node</button>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-1"></div>
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                <input type="text" class="form-control integer-input" id="startNode">
+                <input type="text" class="form-control integer-input" id="endNode">
+                <button type="button" class="btn btn-primary" id="addEdgeButton">Add undirected edge</button>
+            </div>
         </div>
     </div>
 
-
+    <hr>
 
 
 
@@ -72,6 +89,8 @@
     <script src="js/d3.min.js"></script>
 
     <!-- Load local JS files -->
+    <script src="js/draw-graph.js"></script>
+    <script src="js/main.js"></script>
 
 </body>
 </html>
