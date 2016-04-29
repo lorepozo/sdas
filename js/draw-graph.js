@@ -92,7 +92,6 @@ function addEdge(vis) {
     coordinates.x2 = parseFloat(d3.select("#n" + endNode).attr("cx"));
     coordinates.y2 = parseFloat(d3.select("#n" + endNode).attr("cy"));
     var calculatedCoordinates = calcXY(coordinates);
-    console.log(calculatedCoordinates);
 
     vis.g.append("line")
         .attr("x1", calculatedCoordinates.x1 + coordinates.x1)
@@ -130,19 +129,46 @@ function dragmove() {
         .attr("cy", Math.max(Math.min(d3.event.y, (height/2.0) - radius - 7), -(height/2.0) + radius + 1));
 
 
-    
-
     var start = "[id^=l" + circle.attr("id") + "-]";
     var end = "[id$=-" + circle.attr("id") + "]";
-    d3.selectAll(start)
-        .attr("x1", circle.attr("cx"))
-        .attr("y1", circle.attr("cy"));
 
-    d3.selectAll(end)
-        .attr("x2", circle.attr("cx"))
-        .attr("y2", circle.attr("cy"));
+    var whereStart = d3.selectAll(start);
+    for(var i = 0; i < whereStart[0].length; i++) {
+        var line = d3.select(whereStart[0][i]);
+        var endId = line.attr("id").slice(line.attr("id").indexOf("-") + 1);
+        var endCircle = d3.select("#" + endId);
 
+        var coordinates = {};
+        coordinates.x1 = parseFloat(circle.attr("cx"));
+        coordinates.y1 = parseFloat(circle.attr("cy"));
+        coordinates.x2 = parseFloat(endCircle.attr("cx"));
+        coordinates.y2 = parseFloat(endCircle.attr("cy"));
+        var calculatedCoordinates = calcXY(coordinates);
+        line
+            .attr("x1", calculatedCoordinates.x1 + coordinates.x1)
+            .attr("y1", calculatedCoordinates.y1 + coordinates.y1)
+            .attr("x2", calculatedCoordinates.x2 + coordinates.x2)
+            .attr("y2", calculatedCoordinates.y2 + coordinates.y2);
+    };
 
+    var whereEnd = d3.selectAll(end);
+    for(var i = 0; i < whereEnd[0].length; i++) {
+        var line = d3.select(whereEnd[0][i]);
+        var startId = line.attr("id").slice(1,line.attr("id").indexOf("-"));
+        var startCircle = d3.select("#" + startId);
+
+        var coordinates = {};
+        coordinates.x1 = parseFloat(startCircle.attr("cx"));
+        coordinates.y1 = parseFloat(startCircle.attr("cy"));
+        coordinates.x2 = parseFloat(circle.attr("cx"));
+        coordinates.y2 = parseFloat(circle.attr("cy"));
+        var calculatedCoordinates = calcXY(coordinates);
+        line
+            .attr("x1", calculatedCoordinates.x1 + coordinates.x1)
+            .attr("y1", calculatedCoordinates.y1 + coordinates.y1)
+            .attr("x2", calculatedCoordinates.x2 + coordinates.x2)
+            .attr("y2", calculatedCoordinates.y2 + coordinates.y2);
+    };
 }
 
 function startDrag() {
