@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Graph Algorithm Computer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="container">
+      <h2>Graph Algorithm Computer</h2>
+    </div>
+    <script>
+      var x = new XMLHttpRequest();
+      x.open("GET", "main.scm", true);
+      x.onload = function() {
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.innerHTML = this.responseText;;
+        script.src = "biwascheme.js";
+        script.id = "scmcontainer";
+        head.appendChild(script);
+      }
+      x.send();
+    </script>
+  </body>
+</html>
