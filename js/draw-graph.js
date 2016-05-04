@@ -55,6 +55,7 @@ DrawingArea.prototype.initVis = function() {
     $("body").click(function() {
         $("#startNode").val("Start");
         $("#endNode").val("End");
+        $("#nodeText").val("Node text");
         $("#weight").val("Weight")})
         .find("#weight")
         .on("click", function(e) {
@@ -67,11 +68,16 @@ DrawingArea.prototype.initVis = function() {
         .parent().find("#endNode")
         .on("click", function(e) {
             e.stopPropagation();
+        })
+        .parent().parent().find("#nodeText")
+        .on("click", function(e) {
+            e.stopPropagation();
         });
 
     $("#startNode").click(function() {$(this).val("")});
     $("#endNode").click(function() {$(this).val("")});
     $("#weight").click(function() {$(this).val("")});
+    $("#nodeText").click(function () {$(this).val("")});
 };
 
 function changeMode(vis){
@@ -84,6 +90,7 @@ function changeMode(vis){
         $("#addEdgeButton").hide();
         $("#addDirEdgeButton").hide();
         $("#addNodeButton").hide();
+        $("#nodeText").hide();
     } else {
         $("#startNode").show();
         $("#endNode").show();
@@ -91,6 +98,7 @@ function changeMode(vis){
         $("#addEdgeButton").show();
         $("#addDirEdgeButton").show();
         $("#addNodeButton").show();
+        $("#nodeText").show();
     }
     addMode = !addMode;
 }
@@ -98,6 +106,11 @@ function changeMode(vis){
 
 // Function for adding a node to the middle of the drawing area
 function addNode(vis) {
+
+    var nodeText = $("#nodeText").val();
+    var textSet = false;
+    (nodeText != "Node text") && (textSet = true);
+
     var node = vis.svg.append("g")
         .attr("height", 30)
         .attr("width", 30)
@@ -109,6 +122,17 @@ function addNode(vis) {
         .attr("font-color", themeColor)
         .attr("id", "tn" + vis.nodeCounter)
         .text(vis.nodeCounter);
+
+    console.log(textSet);
+    if (textSet) {
+        node.append("text")
+            .attr("text-anchor", "middle")
+            .attr("dy", -17.5)
+            .attr("dx", -15)
+            .attr("font-color", themeColor)
+            .attr("id", "nodeText" + vis.nodeCounter)
+            .text(nodeText);
+    }
 
     var drag = d3.behavior.drag()
         .on("drag", dragmove)
@@ -322,15 +346,23 @@ function dragmove() {
 }
 
 function startDrag() {
-    d3.select(this.parentElement).select("text").attr("visibility", "hidden");
+    d3.select(this.parentElement).selectAll("text").attr("visibility", "hidden");
     d3.select(this).attr("fill-opacity", 1);
 }
 
 function endDrag() {
     d3.select(this).attr("fill-opacity", 0);
-    d3.select(this.parentElement).select("text")
+    var textElements = d3.select(this.parentElement).selectAll("text");
+    d3.select(textElements[0][0])
         .attr("dx", d3.select(this).attr("cx"))
         .attr("dy", parseFloat(d3.select(this).attr("cy")) + 5)
+        .attr("visibility", "visible");
+
+    console.log(d3.select(this).attr("cx"));
+
+    d3.select(textElements[0][1])
+        .attr("dx", parseFloat(d3.select(this).attr("cx")) - 15)
+        .attr("dy", parseFloat(d3.select(this).attr("cy")) - 17.5)
         .attr("visibility", "visible");
 }
 
