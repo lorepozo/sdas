@@ -16,9 +16,17 @@ hr {
 }
 
 .integer-input {
-    width : 50px;
+    width: 70px;
+    display: inline;
+    text-align: right;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+#nodeText {
+    width : 100px;
     display : inline;
     text-align: right;
+    color: rgba(0, 0, 0, 0.5);
 }
 
 svg {
@@ -33,4 +41,10 @@ circle {
 
 .node text {
     font: 10px sans-serif;
+}
+
+.edge {
+    stroke-width : 2;
+    fill : none;
+    stroke : black;
 }
