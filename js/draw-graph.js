@@ -4,7 +4,7 @@
 
 
 var width;
-var height = window.innerHeight - 100;
+var height = window.innerHeight - 150;
 var radius = 15;
 var arrowSize = 50;
 var curveWidth = 30;
@@ -41,67 +41,8 @@ DrawingArea.prototype.initVis = function() {
 
     vis.nodeCounter = 0;
 
-    // Handler for the "Add node" button
-    $("#addNodeButton").click(function() { addNode(vis); });
-
-    // Handler for mode button
-    $("#modeButton").click(function() {changeMode(vis); });
-
-    // Handler for the "Add edge" button
-    $("#addEdgeButton").click(function() {addEdge(vis, false);});
-    $("#addDirEdgeButton").click(function() {addEdge(vis, true); });
-
-    // Remove value in text fields when clicked
-    $("body").click(function() {
-        $("#startNode").val("Start");
-        $("#endNode").val("End");
-        $("#nodeText").val("Node text");
-        $("#weight").val("Weight")})
-        .find("#weight")
-        .on("click", function(e) {
-            e.stopPropagation();
-        })
-        .parent().find("#startNode")
-        .on("click", function(e) {
-            e.stopPropagation();
-        })
-        .parent().find("#endNode")
-        .on("click", function(e) {
-            e.stopPropagation();
-        })
-        .parent().parent().find("#nodeText")
-        .on("click", function(e) {
-            e.stopPropagation();
-        });
-
-    $("#startNode").click(function() {$(this).val("")});
-    $("#endNode").click(function() {$(this).val("")});
-    $("#weight").click(function() {$(this).val("")});
-    $("#nodeText").click(function () {$(this).val("")});
+    
 };
-
-function changeMode(vis){
-    var button = $("#modeButton");
-    (button.text() == "Delete mode") ? button.text("Add mode") : button.text("Delete mode");
-    if (addMode) {
-        $("#startNode").hide();
-        $("#endNode").hide();
-        $("#weight").hide();
-        $("#addEdgeButton").hide();
-        $("#addDirEdgeButton").hide();
-        $("#addNodeButton").hide();
-        $("#nodeText").hide();
-    } else {
-        $("#startNode").show();
-        $("#endNode").show();
-        $("#weight").show();
-        $("#addEdgeButton").show();
-        $("#addDirEdgeButton").show();
-        $("#addNodeButton").show();
-        $("#nodeText").show();
-    }
-    addMode = !addMode;
-}
 
 
 // Function for adding a node to the middle of the drawing area
@@ -123,16 +64,14 @@ function addNode(vis) {
         .attr("id", "tn" + vis.nodeCounter)
         .text(vis.nodeCounter);
 
-    console.log(textSet);
-    if (textSet) {
-        node.append("text")
-            .attr("text-anchor", "middle")
-            .attr("dy", -17.5)
-            .attr("dx", -15)
-            .attr("font-color", themeColor)
-            .attr("id", "nodeText" + vis.nodeCounter)
-            .text(nodeText);
-    }
+    node.append("text")
+        .attr("text-anchor", "middle")
+        .attr("dy", -17.5)
+        .attr("dx", -15)
+        .attr("font-color", themeColor)
+        .attr("id", "nodeText" + vis.nodeCounter);
+
+    textSet && d3.select("#nodeText" + vis.nodeCounter).text(nodeText);
 
     var drag = d3.behavior.drag()
         .on("drag", dragmove)
@@ -205,11 +144,9 @@ function addEdge(vis, directed) {
     } else {
         curve = false;
         if(checkIfUndirected(startNode, endNode)) {
-            console.log("test");
             updateWeight(startNode, endNode, weight, false);
             return;
         }
-        console.log(checkIfDirected(startNode, endNode));
         checkIfDirected(startNode, endNode) && removeEdge(startNode, endNode, true);
         checkIfDirected(endNode, startNode) && removeEdge(endNode, startNode, true);
     }
@@ -358,8 +295,6 @@ function endDrag() {
         .attr("dy", parseFloat(d3.select(this).attr("cy")) + 5)
         .attr("visibility", "visible");
 
-    console.log(d3.select(this).attr("cx"));
-
     d3.select(textElements[0][1])
         .attr("dx", parseFloat(d3.select(this).attr("cx")) - 15)
         .attr("dy", parseFloat(d3.select(this).attr("cy")) - 17.5)
@@ -438,9 +373,10 @@ function changeNodeNumbering(nodeId) {
         var currentId = currentNode.attr("id").slice(1);
         if (currentId > nodeId) {
             currentNode.attr("id", "n" + (currentId - 1));
-            var nodeText = $("#tn" + currentId);
-            nodeText.text(currentId-1);
-            nodeText.attr("id", "tn" + (currentId-1));
+            var nodeInnerText = $("#tn" + currentId);
+            $("nodeText" + currentId).attr("id", "nodeText" + (currentId - 1));
+            nodeInnerText.text(currentId-1);
+            nodeInnerText.attr("id", "tn" + (currentId-1));
 
         }
     }
@@ -455,7 +391,6 @@ function changeNodeNumbering(nodeId) {
         }
         var startId = currentId.slice(3, currentId.indexOf("-"));
         var endId = currentId.slice(currentId.indexOf("-")+2);
-        console.log("#tn" + startId + "-n" + endId);
         var currentEdgeText = $("#tn" + startId + "-n" + endId);
         (startId > nodeId) && (startId--);
         (endId > nodeId) && (endId--);

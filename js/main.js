@@ -4,57 +4,101 @@
 
 var adjacencyMatrix = [];
 var edgeDirectedMatrix = [];
-
 var graphArea = new DrawingArea("graph-drawing");
+var playing = false;
+
+// Mode changing
+$("#playModeButtons").hide();
+$("#playModeButton").click(function() {
+    $("#playModeButtons").show();
+    $("#addModeButtons").hide();
+    step = {"textNode" : [], "textEdge" : [], "highlightNode" : [], "highlightEdge" : []};
+    stepHistory = [step];
+    compute();
+});
+
+$("#deleteModeButton").click(function() {
+    $("#addModeButtons").hide();
+    $("#playModeButtons").hide();
+    addMode = false;
+    reset(reverseHistory);
+    currentStep = 0;
+    stepHistory = [];
+    reverseHistory = [];
+    stepNumber = 0;
+});
+
+$("#addModeButton").click(function() {
+    $("#addModeButtons").show();
+    $("#playModeButtons").hide();
+    addMode = true;
+    reset(reverseHistory);
+    currentStep = 0;
+    stepHistory = [];
+    reverseHistory = [];
+    stepNumber = 0;
+});
 
 
-function addNewNodeToMatrix() {
-    if (adjacencyMatrix.length == 0) {
-        adjacencyMatrix.push([0]);
-        edgeDirectedMatrix.push([false]);
-    } else {
-        adjacencyMatrix.forEach(function(list) {
-            list.push(0);
-        });
-        edgeDirectedMatrix.forEach(function(list) {
-            list.push(false);
-        })
-        adjacencyMatrix.push(Array(adjacencyMatrix[0].length).fill(0));
-        edgeDirectedMatrix.push(Array(edgeDirectedMatrix[0].length).fill(false));
-    }
-}
+// Mechanisms for play-pause, backwards and forward
+$("#play-pause").click(function() {
+    $(this).find(">:first-child").attr("class", function() {
+        if(playing) {
+            return "fa fa-play";
+        } return "fa fa-pause";
+    });
+    playing = !playing;
+    playing && playForward(stepHistory);
+});
 
-function removeNodeFromMatrix(node) {
-    for(var i = 0; i < adjacencyMatrix.length; i++) {
-        adjacencyMatrix[i] = adjacencyMatrix[i].slice(0,node).concat(adjacencyMatrix[i].slice(node+1));
-        edgeDirectedMatrix[i] = edgeDirectedMatrix[i].slice(0,node).concat(edgeDirectedMatrix[i].slice(node+1));
-    }
-    adjacencyMatrix = adjacencyMatrix.slice(0,node).concat(adjacencyMatrix.slice(node+1));
-    edgeDirectedMatrix = edgeDirectedMatrix.slice(0,node).concat(edgeDirectedMatrix.slice(node+1));
-}
+$("#backward").click(function() {
+    $("#play-pause").find(">:first-child").attr("class", "fa fa-play");
+    playing = false;
+    playBackward(reverseHistory);
+});
 
-function addEdgeToMatrix(start, end, weight) {
-    adjacencyMatrix[start][end] = weight;
-}
+$("#forward").click(function() {
+    $("#play-pause").find(">:first-child").attr("class", "fa fa-play");
+    playing = false;
+    playOneStepForward(stepHistory);
+});
 
-function setDirected(start, end) {
-    edgeDirectedMatrix[start][end] = true;
-}
+// Handler for the "Add node" button
+$("#addNodeButton").click(function() { addNode(graphArea); });
 
-function checkIfUndirected(start, end) {
-    return ((adjacencyMatrix[start][end] != 0) && (adjacencyMatrix[end][start] !=0)
-                && (!checkIfDirected(start, end) || !checkIfDirected(end, start)));
-}
 
-function checkIfDirected(start,end) {
-    return edgeDirectedMatrix[start][end];
-}
 
-function getEdgeWeight(start,end) {
-    return adjacencyMatrix[start][end];
-}
+// Handler for the "Add edge" button
+$("#addEdgeButton").click(function() {addEdge(graphArea, false);});
+$("#addDirEdgeButton").click(function() {addEdge(graphArea, true); });
 
-function removeEdgeFromMatrix(startNode, endNode) {
-    adjacencyMatrix[startNode][endNode] = 0;
-    edgeDirectedMatrix[startNode][endNode] = false;
-}
+// Remove value in text fields when clicked
+$("body").click(function() {
+        $("#startNode").val("Start");
+        $("#endNode").val("End");
+        $("#nodeText").val("Node text");
+        $("#weight").val("Weight")})
+    .find("#weight")
+    .on("click", function(e) {
+        e.stopPropagation();
+    })
+    .parent().find("#startNode")
+    .on("click", function(e) {
+        e.stopPropagation();
+    })
+    .parent().find("#endNode")
+    .on("click", function(e) {
+        e.stopPropagation();
+    })
+    .parent().parent().find("#nodeText")
+    .on("click", function(e) {
+        e.stopPropagation();
+    });
+
+$("#startNode").click(function() {$(this).val("")});
+$("#endNode").click(function() {$(this).val("")});
+$("#weight").click(function() {$(this).val("")});
+$("#nodeText").click(function () {$(this).val("")});
+$("#noRounds").click(function () {$(this).val("")});
+
+

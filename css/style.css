@@ -3,8 +3,8 @@ h2, h3 {
 }
 
 hr {
-    margin-top : 0;
-    margin-bottom : 40px;
+    margin-top : 0px;
+    margin-bottom : 10px;
 }
 
 .form-group {
@@ -47,4 +47,26 @@ circle {
     stroke-width : 2;
     fill : none;
     stroke : black;
+}
+
+.padded-row {
+    margin-top : 10px;
+    margin-bottom : 10px;
+}
+
+.btn-circle {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 18px;
+    line-height: 1.42;
+    border-radius: 20px;
+}
+
+#noRounds{
+    display : inline;
+    width : 130px;
+    text-align: right;
+    color: rgba(0, 0, 0, 0.5);
 }
