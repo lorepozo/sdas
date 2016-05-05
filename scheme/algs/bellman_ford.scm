@@ -13,28 +13,29 @@
 (define (transition state edges-in edges-out gui)
   (state-round-set! state (+ (state-round state) 1))
 
-  (cond ((< (state-round state) (state-num-nodes state))
+  (cond ((< (state-round state) (+ 2 (state-num-nodes state)))
          ;; BROADCAST
          (msg-spam! edges-out (state-dist state))
          ;; RELAX
          (for-each
            (lambda (edge)
              (if (not (null? (edge-msg edge)))
-                 (let ((dist (+ (edge-weight edge) (edge-msg edeg)))
+                 (let ((dist (+ (edge-weight edge) (edge-msg edge)))
                        (parent (edge-number edge)))
-                   (if (< dist (state-dist state))
+                   (if (or (null? (state-dist state))
+                           (< dist (state-dist state)))
                        (begin (state-dist-set! state dist)
                               (state-parent-set! state parent))))))
            edges-in)))
 
   ;; GUI
   (gui-edge-text-all gui edges-out)
-  (let ((dist (state-dist state)))
-    (gui-node-text gui (if (null? dist) 'inf dist)))
-  (let ((parent (edge-with-num edge (state-parent state))))
+  (let ((dist (state-dist state))
+        (parent (edge-with-num edges-in (state-parent state))))
+    (gui-node-text gui (if (null? dist) 'inf dist))
     (if parent
         (gui-edge-highlight gui parent "blue")))
-  (if (= 0 (state-dist state))
+  (if (eqv? 0 (state-dist state)) ; root node
       (gui-node-highlight gui "blue"))
   )
 

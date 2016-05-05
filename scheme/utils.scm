@@ -10,9 +10,11 @@
           (map edge-msg edges)))
 
 (define (edge-with-num edges num)
-  (find (lambda (edge)
-          (= (edge-number edge) num))
-        edges))
+  (if (number? num)
+      (find (lambda (edge)
+              (= (edge-number edge) num))
+            edges)
+      #f))
 
 (define (msg-send! edge msg)
   (vector-set! edge 1 msg))

@@ -24,3 +24,11 @@
 (define error console-error)
 (define assert
   (lambda args (if (not (car args)) (apply error (cdr args)))))
+
+(define (list-head l k)
+  (let lp ((sl l) (i k))
+    (cond ((< i 1) '())
+          ((= i 1) (set-cdr! sl '())
+                   l)
+          (else (lp (cdr sl) (- i 1))))))
+
