@@ -3,6 +3,7 @@
  */
 
 function calcXY(startNode, endNode) {
+    
     var x1 = parseFloat(d3.select("#n" + startNode).attr("cx"));
     var y1 = parseFloat(d3.select("#n" + startNode).attr("cy"));
     var x2 = parseFloat(d3.select("#n" + endNode).attr("cx"));

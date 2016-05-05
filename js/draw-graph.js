@@ -60,19 +60,23 @@ function addNode(vis) {
     var node = vis.svg.append("g")
         .attr("height", 30)
         .attr("width", 30)
-        .attr("transform", "translate(" + (vis.centerX + position[0]) + "," + (vis.centerY + position[1]) + ")");
+        .attr("transform", "translate(" + vis.centerX + "," + vis.centerY + ")");
 
     node.append("text")
         .attr("text-anchor", "middle")
-        .attr("dy", ".35em")
+        .attr("dx", position[0])
+        .attr("dy", position[1] + 5)
         .attr("font-color", themeColor)
         .attr("id", "tn" + vis.nodeCounter)
         .text(vis.nodeCounter);
 
+    console.log(position[0]);
+    console.log(position[1]);
+
     node.append("text")
         .attr("text-anchor", "middle")
-        .attr("dy", -17.5)
-        .attr("dx", -15)
+        .attr("dy", position[1]-17.5)
+        .attr("dx", position[0]-15)
         .attr("font-color", themeColor)
         .attr("id", "nodeText" + vis.nodeCounter);
 
@@ -86,8 +90,8 @@ function addNode(vis) {
 
     node.append("circle")
         .attr("r", radius)
-        .attr("cx", 0)
-        .attr("cy", 0)
+        .attr("cx", position[0])
+        .attr("cy", position[1])
         .attr("id", "n" + vis.nodeCounter)
         .attr("fill", themeColor)
         .attr("stroke", themeColor)
