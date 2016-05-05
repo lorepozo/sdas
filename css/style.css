@@ -70,3 +70,7 @@ circle {
     text-align: right;
     color: rgba(0, 0, 0, 0.5);
 }
+
+#graph-drawing {
+    margin-top : 10px;
+}

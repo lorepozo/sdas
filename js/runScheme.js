@@ -2,7 +2,9 @@
  * Created by Moan on 04/05/16.
  */
 
-var interpreter = new BiwaScheme.Interpreter();
+var interpreter = new BiwaScheme.Interpreter(function(e) {
+    console.log(e.message);
+});
 
 function compute() {
     var x = new XMLHttpRequest();
@@ -12,3 +14,5 @@ function compute() {
     }
     x.send();
 }
+
+

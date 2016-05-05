@@ -3,13 +3,14 @@
 <head>
     <title>Graph Algorithm Computer</title>
 
-
     <!-- Load CSS Libraries -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/codemirror.css">
 
     <!-- Load local CSS stylesheets -->
     <link rel="stylesheet" href="css/style.css">
+
 </head>
 <body>
     <div class="container">
@@ -22,33 +23,43 @@
             <div id="intro-text"></div>
         </div>
 
-        <!--<div class="row">
-            <div class="col-lg-7 col-md-7 col-sm-7">
-                <div class="form-group">
-                    <label for="comment">Algorithm</label>
-                    <textarea class="form-control" rows="10" id="comment">
-
-                    </textarea>
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
+                <div style="border:solid; margin-bottom:10px">
+                    <textarea id="editorArea" rows="4" cols="10">;;; Scheme code editor ;;;</textarea>
                 </div>
             </div>
-        </div>-->
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
+                <div class="pull-right">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            Choose algorithm <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" id="algorithm-dropdown">
+                            <li><a>BFS</a></li>
+                            <li><a>DFS</a></li>
+                            <li><a>A*</a></li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="save">Save as algorithm</button>
+                </div>
+            </div>
+        </div>
 
         <!--<div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12">
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose algorithm
-                        <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">BFS</a></li>
-                        <li><a href="#">DFS</a></li>
-                        <li><a href="#">A*</a></li>
-                    </ul>
-                </div>
+
                 <input type="text" class="form-control" id="noRounds" value="Max # of rounds">
             </div>
         </div>-->
 
-        <div class="row"><div id="graph-drawing"></div></div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div id="graph-drawing"></div>
+            </div>
+        </div>
         <div class="row" id="addModeButtons">
             <div class="col-lg-3 col-md-3 col-sm-3">
                 <input type="text" class="form-control" id="nodeText" value="Node text">
@@ -82,11 +93,6 @@
 
     </div>
 
-    <hr>
-
-
-
-
 
     <!-- Load JS Libraries -->
     <script src="js/jquery.min.js"></script>
@@ -102,6 +108,9 @@
     <script src="js/parseScheme.js"></script>
     <script src="js/main.js"></script>
     <script src="js/runScheme.js"></script>
+    <script src="js/codemirror.js"></script>
+    <script src="mode/scheme/scheme.js"></script>
+    <script src="js/editor.js"></script>
 
 
 

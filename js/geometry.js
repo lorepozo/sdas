@@ -83,3 +83,11 @@ function calcEdgeTextPosition(coordinates, dist) {
 }
 
 
+function calcNextXY(r,angle) {
+    var x = r*Math.cos(angle);
+    var y = r*Math.sin(angle);
+    angle += 160 * Math.PI / 180.0;
+    return [x,y,angle];
+}
+
+

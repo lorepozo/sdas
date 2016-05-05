@@ -4,12 +4,15 @@
 
 
 var width;
-var height = window.innerHeight - 150;
+var height = window.innerHeight/1.5;
 var radius = 15;
 var arrowSize = 50;
 var curveWidth = 30;
 var themeColor = "black";
 var addMode = true;
+
+var nodeX, nodeY;
+var angle = Math.PI/2.0;
 
 DrawingArea = function(_parentElement) {
     this.parentElement = _parentElement;
@@ -51,11 +54,13 @@ function addNode(vis) {
     var nodeText = $("#nodeText").val();
     var textSet = false;
     (nodeText != "Node text") && (textSet = true);
+    var position = calcNextXY(100, angle);
+    angle = position[2];
 
     var node = vis.svg.append("g")
         .attr("height", 30)
         .attr("width", 30)
-        .attr("transform", "translate(" + vis.centerX + "," + vis.centerY + ")");
+        .attr("transform", "translate(" + (vis.centerX + position[0]) + "," + (vis.centerY + position[1]) + ")");
 
     node.append("text")
         .attr("text-anchor", "middle")
