@@ -3,7 +3,7 @@
  */
 
 var interpreter = new BiwaScheme.Interpreter(function(e) {
-    console.log(e.message);
+    console.error(e.message);
 });
 
 function compute() {

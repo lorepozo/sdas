@@ -1,33 +1,27 @@
-(define output (list
-		 (list (list (list 1 "red") (list 0 "blue")) 
-		       (list (list 1 "test") (list 0 "test"))  
-		       (list (list 0 1 "blue")) (list (list 0 1 "0-1"))) 
-		 (list (list (list 1 "blue") (list 0 "red"))  
-		       (list (list 0 "test2") (list 1 "test2")) 
-		       (list (list 0 1 "red"))  
-		       (list (list 0 1 "0-foo")))
-		 ))
+(load "scheme/fixes.scm")
 
+(define (output-parser steps)
+  (let lp ((i 0) (s steps))
+    (if (null? s)
+        'done
+        (let ((step (car s)))
+          (let ilp ((v 0))
+            (if (> v 3)
+                (lp (+ i 1) (cdr s))
+                (begin
+                  (for-each
+                    (lambda (atom)
+                      (scheme-to-js (list->js-array atom) v i))
+                    (vector-ref step v))
+                  (ilp (+ v 1)))))))))
 
-(define (outputparser output)
-  (define (innerLoop object innerCounter outerCounter)
-    (cond ((pair? object)
-	   (scheme-to-js (list->js-array (car object)) innerCounter outerCounter)
-	   (innerLoop (cdr object) innerCounter outerCounter))))
+(load "scheme/dist.scm")
+(load "scheme/algs/leader_elect.scm")
+(define (input-parser)
+  (let* ((inp (js-to-scheme))
+         (graph inp))
+    (make-alg-args (list->vector (map list->vector graph))
+                   15
+                   0)))
+(output-parser (runtime (input-parser)))
 
-  (define (stepLoop step innerCounter outerCounter)
-    (cond ((pair? step)
-		 (innerLoop (car step) innerCounter outerCounter)
-		 (stepLoop (cdr step) (+ innerCounter 1) outerCounter))))
-
-  (define (outerLoop output outerCounter)
-    (cond ((pair? output)
-		 (stepLoop (car output) 0 outerCounter)
-		 (outerLoop (cdr output) (+ outerCounter 1)))))
-  
-  (outerLoop output 0)
-  'done)
-
-(outputparser output)
-
-    
