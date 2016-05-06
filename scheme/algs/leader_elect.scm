@@ -38,7 +38,7 @@
   (if (>= (state-round state) (state-num-nodes state))
       (gui-node-highlight gui (if (eqv? 'leader (state-status state))
                                   "red"
-                                  "blue")))
+                                  "black")))
   )
 
 (define leader-elect (make-algorithm state-init transition))
