@@ -171,3 +171,6 @@ $("#weight").keydown(function(e) {if (e.keyCode == 13) $("#addDirEdgeButton").cl
 $("#algorithmStartNode").keydown(function (e) {if (e.keyCode == 13) $("#playModeButton").click()});
 $("#noRounds").keydown(function (e) {if (e.keyCode == 13) $("#playModeButton").click()});
 
+// start with a graph already generated
+clearGraph();
+generateMSTGraph(graphArea);

@@ -4,7 +4,7 @@
 
 
 var width;
-var height = (window.innerHeight/1.5>600 ? 600 : window.innerHeight/1.5);
+var height = window.innerHeight/1.5;
 var radius = 25;
 var arrowSize = 100;
 var curveWidth = 30;

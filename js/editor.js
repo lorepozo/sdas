@@ -39,3 +39,11 @@ function addDropdownOptions() {
     })
 }
 
+// initialize with leader elect
+var x = new XMLHttpRequest();
+x.open("GET", "scheme/algs/luby_mis.scm", true);
+x.onload = function() {
+    editor.getDoc().setValue(";;; Scheme code editor ;;;\n " + this.responseText);
+}
+x.send();
+
