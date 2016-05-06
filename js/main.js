@@ -36,8 +36,8 @@ $("#playModeButton").click(function() {
     $("#playModeButtons").show();
     $('#stepCounter').show();
     $("#addModeButtons").hide();
-    $("#addModeButton").css("background-color", "white");
-    $("#deleteModeButton").css("background-color", "white");
+    $("#addModeButton").removeClass("active");
+    $("#addModeButton").removeClass("active");
     play();
 });
 
@@ -61,8 +61,8 @@ $("#deleteModeButton").click(function() {
     $("#addModeButtons").hide();
     $("#playModeButtons").hide();
     $('#stepCounter').hide();
-    $(this).css("background-color", "#e6e6e6");
-    $("#addModeButton").css("background-color", "white");
+    $(this).addClass("active");
+    $("#addModeButton").removeClass("active");
     addMode = false;
     playing = false;
     stepToInitialState();
@@ -75,8 +75,8 @@ $("#addModeButton").click(function() {
     $("#addModeButtons").show();
     $("#playModeButtons").hide();
     $('#stepCounter').hide();
-    $(this).css("background-color", "#e6e6e6");
-    $("#deleteModeButton").css("background-color", "white");
+    $(this).addClass("active");
+    $("#deleteModeButton").removeClass("active");
     addMode = true;
     playing = false;
     stepToInitialState();

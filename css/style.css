@@ -92,3 +92,7 @@ circle {
     fill : black;
 }
 
+.btn-mode.active {
+  background-color:white;
+  color:black;
+}

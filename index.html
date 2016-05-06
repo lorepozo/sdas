@@ -5,7 +5,7 @@
     <title>SDAS: Distributed Algorithm Simulator</title>
 
     <!-- Load CSS Libraries -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap.cosmo.min.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/codemirror.css">
 
@@ -54,8 +54,8 @@
             <h3>NETWORK GRAPH</h3>
             <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2 text-center">
                 <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default" id="deleteModeButton">Delete mode</button>
-                    <button type="button" class="btn btn-default" id="addModeButton" style="background-color:#e6e6e6">Add mode</button>
+                    <button type="button" class="btn btn-default btn-mode" id="deleteModeButton">Delete mode</button>
+                    <button type="button" class="btn btn-default btn-mode active" id="addModeButton">Add mode</button>
                 </div>
             </div>
             <div class="col-lg-2 col-md-2 col-sm-2" id="autoGenerateCol">
@@ -77,7 +77,7 @@
                     <div class="pull-left">
                         <input type="text" class="form-control integer-input" id="startNode" value="Start">
                         <input type="text" class="form-control integer-input" id="endNode" value="End">
-                        <input type="text" class="form-control integer-input" id="weight" value="Weight">
+                        <input type="text" class="form-control integer-input" id="weight" value="Weight" style="width:80px;">
                         <button type="button" class="btn btn-primary" id="addEdgeButton">Add undirected edge</button>
                         <button type="button" class="btn btn-primary" id="addDirEdgeButton">Add directed edge</button>
                         <button type="button" class="btn btn-success" id="addNodeButton">Add node</button>
@@ -85,8 +85,8 @@
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-4">
                     <div class="pull-right">
-                        <input type="text" class="form-control integer-input" id="algorithmStartNode" value="Start node">
-                        <input type="text" class="form-control algorithm-input" id="noRounds" value="Number of rounds">
+                        <input type="text" class="form-control integer-input" id="algorithmStartNode" value="Start node" style="width:110px;">
+                        <input type="text" class="form-control algorithm-input" id="noRounds" value="Number of rounds" style="width:155px;">
                         <div class="btn btn-danger" id="playModeButton">Play</div>
                     </div>
                 </div>
