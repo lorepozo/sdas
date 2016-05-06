@@ -8,10 +8,24 @@ var graphArea = new DrawingArea("graph-drawing");
 var playing = false;
 var maximized = false;
 
+var autoGenerateRandomizer = 0;
 
+function clearGraph() {
+    $('#graph-svg').remove();
+    adjacencyMatrix = [];
+    edgeDirectedMatrix = [];
+    graphArea = new DrawingArea("graph-drawing");
+}
 
 $("#autoGenerate").click(function() {
-    generateLeaderElectGraph(graphArea);
+    clearGraph();
+    switch (autoGenerateRandomizer++) {
+    case 0:  generateBellmanFordGraph(graphArea); break;
+    case 1:  generateLeaderElectGraph(graphArea); break;
+    case 2:  generateLubyMISGraph(graphArea); break;
+    default: generateMSTGraph(graphArea);
+             autoGenerateRandomizer = 0;
+    }
 });
 
 
@@ -20,6 +34,7 @@ $("#save").hide();
 $("#playModeButtons").hide();
 $("#playModeButton").click(function() {
     $("#playModeButtons").show();
+    $('#stepCounter').show();
     $("#addModeButtons").hide();
     $("#addModeButton").css("background-color", "white");
     $("#deleteModeButton").css("background-color", "white");
@@ -29,9 +44,11 @@ $("#playModeButton").click(function() {
 function play() {
     setInitialState();
     stepHistory = [];
+    currentStep = 0;
+    stepNumber = -1;
 
     algorithmStartNode = $("#algorithmStartNode").val();
-    !isInt(algorithmStartNode) ? algorithmStartNode = 0 : algorithmStartNode -= 1;
+    if (!isInt(algorithmStartNode)) algorithmStartNode = 0;
 
     algorithmNumberOfRounds = $("#noRounds").val();
     !isInt(algorithmNumberOfRounds) && (algorithmNumberOfRounds = 15);
@@ -43,6 +60,7 @@ function play() {
 $("#deleteModeButton").click(function() {
     $("#addModeButtons").hide();
     $("#playModeButtons").hide();
+    $('#stepCounter').hide();
     $(this).css("background-color", "#e6e6e6");
     $("#addModeButton").css("background-color", "white");
     addMode = false;
@@ -56,6 +74,7 @@ $("#deleteModeButton").click(function() {
 $("#addModeButton").click(function() {
     $("#addModeButtons").show();
     $("#playModeButtons").hide();
+    $('#stepCounter').hide();
     $(this).css("background-color", "#e6e6e6");
     $("#deleteModeButton").css("background-color", "white");
     addMode = true;
@@ -107,6 +126,14 @@ $("#forward").click(function() {
     playOneStepForward(stepHistory);
 });
 
+// Handler for play mode reset button
+$("#playModeResetButton").click(function() {
+    //TODO this should be done better
+    $("#addModeButton").click();
+    $("#playModeButton").click();
+    $("#stepCounter").text(0);
+});
+
 // Handler for the "Add node" button
 $("#addNodeButton").click(function() { addNode(graphArea); });
 
@@ -118,9 +145,8 @@ $("#addDirEdgeButton").click(function() {addEdge(graphArea, true); });
 $("body").click(function() {
         $("#startNode").val("Start");
         $("#endNode").val("End");
-        $("#nodeText").val("Node text");
-        $("#weight").val("Weight");})
-    .find("#weight")
+        $("#weight").val("Weight");
+    }).find("#weight")
     .on("click", function(e) {
         e.stopPropagation();
     })
@@ -129,10 +155,6 @@ $("body").click(function() {
         e.stopPropagation();
     })
     .parent().find("#endNode")
-    .on("click", function(e) {
-        e.stopPropagation();
-    })
-    .parent().parent().find("#nodeText")
     .on("click", function(e) {
         e.stopPropagation();
     });
@@ -144,4 +166,8 @@ $("#nodeText").click(function () {$(this).val("")});
 $("#noRounds").click(function () {$(this).val("")});
 $("#algorithmStartNode").click(function () {$(this).val("")});
 
+$("#endNode").keydown(function(e) {if (e.keyCode == 13) $("#addEdgeButton").click()});
+$("#weight").keydown(function(e) {if (e.keyCode == 13) $("#addDirEdgeButton").click()});
+$("#algorithmStartNode").keydown(function (e) {if (e.keyCode == 13) $("#playModeButton").click()});
+$("#noRounds").keydown(function (e) {if (e.keyCode == 13) $("#playModeButton").click()});
 

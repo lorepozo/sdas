@@ -20,9 +20,11 @@
        (if (> (length (edges->msgs edges-in)) 0)
            (state-status-set! state 'loser))
        (if (not (null? (state-status state)))
-           (state-active-set! state #f))
-       (state-r-set! state (random-integer (expt (state-num-nodes state) 5)))
-       (msg-spam! edges-out (state-r state)))
+           (state-active-set! state #f)
+           (let ((r (random-integer (expt (state-num-nodes state) 5))))
+             (state-r-set! state r)
+             (msg-spam! edges-out r)
+             (gui-node-text gui r))))
       ;; ROUND 2
       (else
        (let ((max-r (apply max (edges->msgs edges-in))))
@@ -32,11 +34,11 @@
        (if (eqv? 'winner (state-status state))
            (begin (msg-spam! edges-out 'winner)
                   (gui-edge-highlight-all gui edges-out "green")
-                  (gui-edge-text-all gui edges-out))))))
+                  )))))
 
   ;; GUI
   (let ((status (state-status state)))
-    (if (not (state-active state))
+    (if (not (null? status))
         (gui-node-highlight gui (if (eqv? status 'winner)
                                     "green"
                                     "lightgray"))))

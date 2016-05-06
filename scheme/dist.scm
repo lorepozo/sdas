@@ -167,7 +167,8 @@
             (gui-set-viewer! gui uid)
             ((algorithm-trans alg) state edges-in edges-out gui)
             (msg-read-edges-out! new-msgs uid edges-out)
-            (lp (+ uid 1)))))))
+            (lp (+ uid 1)))))
+    ))
 
 (define (runtime alg-args)
   (if (algorithm? user-algorithm)

@@ -32,7 +32,7 @@ function removeNodeFromMatrix(node) {
 }
 
 function addEdgeToMatrix(start, end, weight) {
-    adjacencyMatrix[start][end] = weight;
+    adjacencyMatrix[start][end] = isNaN(weight) ? 0 : weight;
 }
 
 function setDirected(start, end) {
@@ -58,8 +58,5 @@ function removeEdgeFromMatrix(startNode, endNode) {
 }
 
 function undefinedToList(value){
-    if (value == null) {
-        return [];
-    }
-    return value;
+    return (value == null ? [] : value);
 }

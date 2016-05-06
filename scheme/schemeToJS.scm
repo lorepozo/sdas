@@ -7,10 +7,10 @@
         (list last)
         (if (equal? last (list-ref steps i))
             (lp (- i 1))
-            (list-head steps (+ i 1)))))))
+            (list-head steps (+ i 2)))))))
 
 (define (output-parser steps)
-  (let lp ((i 0) (s steps))
+  (let lp ((i 0) (s (contract steps)))
     (if (null? s)
         'done
         (let ((step (car s)))
@@ -28,10 +28,10 @@
 (define (input-parser)
   (let* ((inp (js-to-scheme))
          (graph (car inp))
-         (num-nodes (cadr inp))
+         (num-rounds (cadr inp))
          (start-node (caddr inp)))
     (make-alg-args (list->vector (map list->vector graph))
-                   num-nodes
+                   num-rounds
                    start-node)))
 
 ;(load "scheme/algs/bellman_ford.scm")

@@ -4,7 +4,7 @@
 
 var algorithmNumberOfRounds;
 var algorithmStartNode;
-var stepNumber = 0;
+var stepNumber = -1;
 
 BiwaScheme.define_libfunc("scheme-to-js", 3, 3, function(args) {
     if(args[2] > stepNumber) {
@@ -32,8 +32,3 @@ BiwaScheme.define_libfunc("js-to-scheme", 0, 0, function(){
         var result = [adjacencyMatrix, parseInt(algorithmNumberOfRounds), parseInt(algorithmStartNode)];
         return BiwaScheme.deep_array_to_list(result);
 });
-
-
-
-
-

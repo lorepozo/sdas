@@ -4,11 +4,16 @@
 
 
 var width;
-var height = window.innerHeight/1.5;
-var radius = 15;
-var arrowSize = 50;
+var height = (window.innerHeight/1.5>600 ? 600 : window.innerHeight/1.5);
+var radius = 25;
+var arrowSize = 100;
 var curveWidth = 30;
 var themeColor = "black";
+var themeFontSize = "12pt";
+var themeEdgeWeightFontSize = "8pt";
+var themeChangedFontSize = "16pt";
+var themeEdgeChangedFontSize = themeFontSize;
+var themeFontWeight = "bold";
 var addMode = true;
 
 var nodeX, nodeY;
@@ -37,14 +42,20 @@ DrawingArea.prototype.initVis = function() {
     vis.centerX = vis.width / 2.0;
     vis.centerY = vis.height / 2.0;
 
+    vis.svg.append("g").append("text")
+        .attr("dx", 10)
+        .attr("dy", 30)
+        .attr("font-size", "24pt")
+        .attr("id", "stepCounter")
+        .text("0");
+    $("#stepCounter").hide();
+
     vis.g = vis.svg.append("g")
         .attr("width", vis.width)
         .attr("height", vis.height)
         .attr("transform", "translate(" + vis.centerX + "," + vis.centerY + ")");
 
     vis.nodeCounter = 0;
-
-    
 };
 
 
@@ -63,15 +74,19 @@ function addNode(vis) {
         .attr("text-anchor", "middle")
         .attr("dx", position[0])
         .attr("dy", position[1] + 5)
-        .attr("font-color", themeColor)
+        .attr("fill", themeColor)
+        .attr("font-size", themeFontSize)
+        .attr("font-weight", themeFontWeight)
         .attr("id", "tn" + vis.nodeCounter)
         .text(vis.nodeCounter);
 
     node.append("text")
         .attr("text-anchor", "middle")
-        .attr("dy", position[1]-17.5)
-        .attr("dx", position[0]-15)
-        .attr("font-color", themeColor)
+        .attr("dy", position[1]-radius)
+        .attr("dx", position[0]-radius)
+        .attr("fill", themeColor)
+        .attr("font-size", themeChangedFontSize)
+        .attr("font-weight", themeFontWeight)
         .attr("id", "nodeText" + vis.nodeCounter);
 
     var drag = d3.behavior.drag()
@@ -117,7 +132,7 @@ function addEdge(vis, directed) {
 
     var weight = ($("#weight").val());
     if ((weight == "Weight") || !isInt(weight)) {
-        weight = 0;
+        weight = NaN;
     } else {
         weight = parseInt(weight);
     }
@@ -131,7 +146,7 @@ function addEdge(vis, directed) {
             updateWeight(startNode, endNode, weight, true);
             return;
         } else if (checkIfDirected(endNode, startNode)) {
-            if ((getEdgeWeight(endNode, startNode) == weight) && (weight != 0)) {
+            if ((getEdgeWeight(endNode, startNode) == weight) && !isNaN(weight) && (weight != 0)) {
                 removeEdge(endNode, startNode, true);
                 directed = false;
                 curve = false;
@@ -155,39 +170,39 @@ function addEdge(vis, directed) {
 
     if(directed) {
         addDirectedEdge(vis, startNode, endNode, calcCoord, weight, curve);
-
     } else {
-        vis.g.append("path")
-            .attr("d", "M " + calcCoord.x1 + " " + calcCoord.y1 + " L " + calcCoord.x2 + " " + calcCoord.y2 )
-            .attr("class", "edge")
-            .attr("id", "uln" + startNode + "-n" + endNode)
-            .on("click", function() {
-                !addMode && removeEdge(startNode, endNode, false);
-            });
-
-        vis.g.append("text")
-            .attr("text-anchor", "middle")
-            .attr("transform", calcEdgeTextPosition(calcCoord, 15))
-            .attr("id", "tn" + startNode + "-n" + endNode);
-
-
-        vis.g.append("text")
-            .attr("text-anchor", "middle")
-            .attr("transform", calcStaticEdgeTextPosition(calcCoord, 10))
-            .attr("id", "stn" + startNode + "-n" + endNode)
-            .text(function() {
-                if (weight == 0) {
-                    return "";
-                } return weight;
-            });
-
-        addEdgeToMatrix(startNode, endNode, weight);
-        addEdgeToMatrix(endNode, startNode, weight);
+        addUndirectedEdge(vis, startNode, endNode, calcCoord, weight);
     }
 };
 
-function addDirectedEdge(vis, startNode, endNode, calcCoord, weight, curve) {
+function addUndirectedEdge(vis, startNode, endNode, calcCoord, weight) {
+    addEdgeToMatrix(startNode, endNode, weight);
+    addEdgeToMatrix(endNode, startNode, weight);
 
+    vis.g.append("path")
+        .attr("d", "M " + calcCoord.x1 + " " + calcCoord.y1 + " L " + calcCoord.x2 + " " + calcCoord.y2 )
+        .attr("class", "edge")
+        .attr("id", "uln" + startNode + "-n" + endNode)
+        .on("click", function() {
+            !addMode && removeEdge(startNode, endNode, false);
+        });
+
+    vis.g.append("text")
+        .attr("text-anchor", "middle")
+        .attr("transform", calcEdgeTextPosition(calcCoord, 15))
+        .attr("font-size", themeEdgeChangedFontSize)
+        .attr("font-weight", themeFontWeight)
+        .attr("id", "tn" + startNode + "-n" + endNode);
+
+    vis.g.append("text")
+        .attr("text-anchor", "middle")
+        .attr("transform", calcStaticEdgeTextPosition(calcCoord, 10))
+        .attr("id", "stn" + startNode + "-n" + endNode)
+        .attr("font-size", themeEdgeWeightFontSize)
+        .text(isNaN(weight) ? "" : weight);
+}
+
+function addDirectedEdge(vis, startNode, endNode, calcCoord, weight, curve) {
     setDirected(startNode, endNode);
     addEdgeToMatrix(startNode, endNode, weight);
 
@@ -201,18 +216,17 @@ function addDirectedEdge(vis, startNode, endNode, calcCoord, weight, curve) {
     // Add text
     vis.g.append("text")
         .attr("text-anchor", "middle")
-        .attr("font-color", themeColor)
+        .attr("fill", themeColor)
+        .attr("font-size", themeEdgeChangedFontSize)
+        .attr("font-weight", themeFontWeight)
         .attr("id", "tn" + startNode + "-n" + endNode);
 
     vis.g.append("text")
         .attr("text-anchor", "middle")
         .attr("transform", calcStaticEdgeTextPosition(calcCoord, 10))
+        .attr("font-size", themeEdgeWeightFontSize)
         .attr("id", "stn" + startNode + "-n" + endNode)
-        .text(function() {
-            if (weight == 0) {
-                return "";
-            } return weight;
-        });
+        .text(isNaN(weight) ? "" : weight);
 
     // Add arrow
     vis.g.append("svg:path")
@@ -236,7 +250,7 @@ function setPathCurved(startNode, endNode) {
         .attr("transform", calcEdgeTextPosition(calcCoord, 40));
 
     d3.select("#stn" + startNode + "-n" + endNode)
-        .attr("transform", calcStaticEdgeTextPosition(calcCoord, 10));
+        .attr("transform", calcStaticEdgeTextPosition(calcCoord, -10));
 }
 
 function setPathStraight(startNode, endNode, directed) {
@@ -255,7 +269,7 @@ function setPathStraight(startNode, endNode, directed) {
         .attr("transform", calcEdgeTextPosition(calcCoord, 15));
 
     d3.select("#stn" + startNode + "-n" + endNode)
-        .attr("transform", calcStaticEdgeTextPosition(calcCoord, 10));
+        .attr("transform", calcStaticEdgeTextPosition(calcCoord, 15));
 }
 
 
@@ -325,8 +339,8 @@ function endDrag() {
         .attr("visibility", "visible");
 
     d3.select(textElements[0][1])
-        .attr("dx", parseFloat(d3.select(this).attr("cx")) - 15)
-        .attr("dy", parseFloat(d3.select(this).attr("cy")) - 17.5)
+        .attr("dx", parseFloat(d3.select(this).attr("cx")) - radius)
+        .attr("dy", parseFloat(d3.select(this).attr("cy")) - radius)
         .attr("visibility", "visible");
 }
 
@@ -381,7 +395,6 @@ function removeEdge(startNode, endNode, directed) {
     removeEdgeFromMatrix(startNode, endNode);
 }
 
-
 function updateWeight(startNode, endNode, newWeight, directed) {
     if(directed) {
         var textElement = document.getElementById("dln" + startNode + "-n" + endNode).nextElementSibling;
@@ -392,7 +405,7 @@ function updateWeight(startNode, endNode, newWeight, directed) {
             var textElement = document.getElementById("uln" + endNode + "-n" + startNode).nextElementSibling;
         }
     }
-    textElement.innerHTML = newWeight;
+    textElement.innerHTML = (isNaN(newWeight) ? "" : newWeight);
 }
 
 function changeNodeNumbering(nodeId) {

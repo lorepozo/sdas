@@ -2,64 +2,21 @@
  * Created by Moan on 04/05/16.
  */
 
-var step = {"textNode" : [], "textEdge" : [], "highlightNode" : [], "highlightEdge" : []};
-var stepHistory;
+var stepHistory = [];
 var currentStep = 0;
 var autoplayDelay = 2000;
 var initialState;
-
-
-/*
-var testStepHistory1 = [];
-var testStepHistory2 = [];
-
-var step1 = {
-    "textNode":[{"node":1, "text":"test1"}, {"node":0, "text":"test2"}],
-    "highlightNode": [{"node":1, "color":"blue"}, {"node":0, "color":"blue"}],
-    "textEdge": [{"start": 0, "end": 1, "text": "0-1"}, {"start": 1, "end": 0, "text": "1-0"}],
-    "highlightEdge": [{"start": 0, "end": 1, "color": "green"}, {"start": 1, "end": 0, "color": "green"}]};
-
-var step2 = {
-    "textNode":[{"node":2, "text":"test3"}, {"node":3, "text":"test4"}],
-    "highlightNode": [{"node":2, "color":"blue"}, {"node":3, "color":"blue"}],
-    "textEdge": [{"start": 2, "end": 3, "text": "2-3"}, {"start": 3, "end": 2, "text": "3-2"}],
-    "highlightEdge": [{"start": 2, "end": 3, "color": "green"}, {"start": 3, "end": 2, "color": "green"}]};
-
-var step3 = {
-    "textNode":[],
-    "highlightNode": [],
-    "textEdge": [],
-    "highlightEdge": [{"start": 0, "end": 1, "color": "red"}, {"start": 0, "end": 2, "color": "red"}]};
-
-var step4 = {
-    "textNode":[],
-    "highlightNode": [],
-    "textEdge": [],
-    "highlightEdge": [{"start": 1, "end": 3, "color": "red"}, {"start": 1, "end": 4, "color": "red"},
-        {"start": 2, "end": 5, "color": "red"}]};
-
-var step5 = {
-    "textNode":[],
-    "highlightNode": [],
-    "textEdge": [],
-    "highlightEdge": [{"start": 3, "end": 6, "color": "red"}, {"start": 5, "end": 7, "color": "red"}]};
-
-
-testStepHistory1.push(step1);
-testStepHistory1.push(step2);
-testStepHistory2.push(step3);
-testStepHistory2.push(step4);
-testStepHistory2.push(step5);
-*/
 
 function playForward(stepHistory) {
     var steps = stepHistory.length;
     var playId = setInterval(function(){
         if ((currentStep < steps) && playing) {
+            $('#stepCounter').text(currentStep+1);
             stepForward(stepHistory[currentStep]);
             currentStep++;
         } else {
             clearInterval(playId);
+            $("#play-pause").click();
         }
     }, autoplayDelay);
 }
@@ -71,13 +28,14 @@ function playBackward(stepHistory) {
     } else if (currentStep > 1) {
         stepForward(stepHistory[currentStep-2]);
         currentStep--;
-
     }
+    $('#stepCounter').text(currentStep);
 }
 
 function playOneStepForward(stepHistory) {
     var steps = stepHistory.length;
     if(currentStep < steps) {
+        $('#stepCounter').text(currentStep+1);
         stepForward(stepHistory[currentStep]);
         currentStep++;
     }
@@ -93,7 +51,7 @@ function stepForward(step) {
     });
 
     step.highlightNode.forEach(function(d) {
-        setNodeColor(d.node, d.color);
+        setNodeColor(d.node, d.color, true);
     });
 
     step.textEdge.forEach(function(d) {
@@ -101,7 +59,7 @@ function stepForward(step) {
     });
 
     step.highlightEdge.forEach(function(d) {
-        setEdgeColor(d.start,d.end,d.color)
+        setEdgeColor(d.start,d.end,d.color, true)
     });
 }
 
@@ -143,11 +101,13 @@ function setInitialState() {
     })
 }
 
-function setNodeColor(node, color) {
+function setNodeColor(node, color, thick) {
     $("#n" + node).css("stroke", color);
+    if (thick) $("#n" + node).css("stroke-width", 8);
+    else $("#n" + node).css("stroke-width", 1);
 }
 
-function setEdgeColor(start, end, color) {
+function setEdgeColor(start, end, color, thick) {
     var idString = "n" + start + "-n" + end;
     var edge, arrow;
     if (!((edge = $("#ul" + idString)).length)) {
@@ -157,6 +117,8 @@ function setEdgeColor(start, end, color) {
         }
     }
     edge.css("stroke", color);
+    if (thick) edge.css("stroke-width", 5);
+    else edge.css("stroke-width", 1);
 }
 
 function changeEdgeText(start, end, text) {

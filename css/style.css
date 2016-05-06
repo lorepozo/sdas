@@ -60,7 +60,7 @@ circle {
 }
 
 .edge {
-    stroke-width : 2;
+    stroke-width : 1;
     fill : none;
     stroke : black;
 }
