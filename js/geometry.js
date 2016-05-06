@@ -83,6 +83,24 @@ function calcEdgeTextPosition(coordinates, dist) {
     return "translate(" + x + "," + y + ")";
 }
 
+function calcStaticEdgeTextPosition(coordinates, dist) {
+    var x1 = coordinates.x1;
+    var y1 = coordinates.y1;
+    var x2 = coordinates.x2;
+    var y2 = coordinates.y2;
+    var µ1 = coordinates.µ1;
+    var µ2 = coordinates.µ2;
+
+    var center = Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2)) / 2.0;
+
+    var x = ((x1 <= x2) ? center * Math.cos(µ1) + x1  : center * Math.cos(µ2) + x2);
+    var y = ((y1 <= y2) ? center * Math.sin(µ1) + y1  : center * Math.sin(µ2) + y2);
+    x += (dist)*Math.sin(µ1);
+    y -= (dist)*Math.cos(µ1);
+
+    return "translate(" + x + "," + y + ")";
+}
+
 
 function calcNextXY(r,angle) {
     var x = r*Math.cos(angle);

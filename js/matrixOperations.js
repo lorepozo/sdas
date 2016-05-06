@@ -4,23 +4,27 @@
 
 function addNewNodeToMatrix() {
     if (adjacencyMatrix.length == 0) {
-        adjacencyMatrix.push([0]);
+        adjacencyMatrix.push([[]]);
         edgeDirectedMatrix.push([false]);
     } else {
         adjacencyMatrix.forEach(function(list) {
-            list.push(0);
+            list.push([]);
         });
         edgeDirectedMatrix.forEach(function(list) {
             list.push(false);
         })
-        adjacencyMatrix.push(Array(adjacencyMatrix[0].length).fill(0));
+        adjacencyMatrix.push(Array(adjacencyMatrix[0].length).fill([]));
         edgeDirectedMatrix.push(Array(edgeDirectedMatrix[0].length).fill(false));
     }
 }
 
 function removeNodeFromMatrix(node) {
+    node = parseInt(node);
     for(var i = 0; i < adjacencyMatrix.length; i++) {
-        adjacencyMatrix[i] = adjacencyMatrix[i].slice(0,node).concat(adjacencyMatrix[i].slice(node+1));
+        var front = adjacencyMatrix[i].slice(0,node);
+        var back = adjacencyMatrix[i].slice(node+1);
+
+        adjacencyMatrix[i] = front.concat(back);
         edgeDirectedMatrix[i] = edgeDirectedMatrix[i].slice(0,node).concat(edgeDirectedMatrix[i].slice(node+1));
     }
     adjacencyMatrix = adjacencyMatrix.slice(0,node).concat(adjacencyMatrix.slice(node+1));
@@ -36,7 +40,7 @@ function setDirected(start, end) {
 }
 
 function checkIfUndirected(start, end) {
-    return ((adjacencyMatrix[start][end] != 0) && (adjacencyMatrix[end][start] !=0)
+    return ((!Array.isArray(adjacencyMatrix[start][end])) && (!Array.isArray(adjacencyMatrix[end][start]))
     && (!checkIfDirected(start, end) || !checkIfDirected(end, start)));
 }
 
@@ -49,6 +53,13 @@ function getEdgeWeight(start,end) {
 }
 
 function removeEdgeFromMatrix(startNode, endNode) {
-    adjacencyMatrix[startNode][endNode] = 0;
+    adjacencyMatrix[startNode][endNode] = [];
     edgeDirectedMatrix[startNode][endNode] = false;
+}
+
+function undefinedToList(value){
+    if (value == null) {
+        return [];
+    }
+    return value;
 }

@@ -2,7 +2,8 @@
  * Created by Moan on 04/05/16.
  */
 
-
+var algorithmNumberOfRounds;
+var algorithmStartNode;
 var stepNumber = 0;
 
 BiwaScheme.define_libfunc("scheme-to-js", 3, 3, function(args) {
@@ -27,8 +28,9 @@ BiwaScheme.define_libfunc("scheme-to-js", 3, 3, function(args) {
     }
 });
 
-BiwaScheme.define_libfunc("js-to-scheme", 0, 0, function() {
-    return BiwaScheme.deep_array_to_list(adjacencyMatrix);
+BiwaScheme.define_libfunc("js-to-scheme", 0, 0, function(){
+        var result = [adjacencyMatrix, parseInt(algorithmNumberOfRounds), parseInt(algorithmStartNode)];
+        return BiwaScheme.deep_array_to_list(result);
 });
 
 

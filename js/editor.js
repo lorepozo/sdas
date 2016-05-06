@@ -14,6 +14,7 @@ function addEditor() {
 
     var width = $(textArea).parent().parent().width();
     editor.setSize(width-10, 500);
+    editor.getWrapperElement().style.display = "none";
 }
 
 function addDropdownHandlers() {
@@ -33,6 +34,7 @@ function addDropdownOptions() {
                 editor.getDoc().setValue(";;; Scheme code editor ;;;\n " + this.responseText);
             }
             x.send();
+            $("#dropdown").html(this.innerHTML + " <span class=\"caret\"></span>");
         }
     })
 }

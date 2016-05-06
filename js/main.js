@@ -6,37 +6,81 @@ var adjacencyMatrix = [];
 var edgeDirectedMatrix = [];
 var graphArea = new DrawingArea("graph-drawing");
 var playing = false;
+var maximized = false;
+
+
+
+$("#autoGenerate").click(function() {
+    generateLeaderElectGraph(graphArea);
+});
+
 
 // Mode changing
+$("#save").hide();
 $("#playModeButtons").hide();
 $("#playModeButton").click(function() {
     $("#playModeButtons").show();
     $("#addModeButtons").hide();
-    step = {"textNode" : [], "textEdge" : [], "highlightNode" : [], "highlightEdge" : []};
-    stepHistory = [step];
-    compute();
+    $("#addModeButton").css("background-color", "white");
+    $("#deleteModeButton").css("background-color", "white");
+    play();
 });
+
+function play() {
+    setInitialState();
+    stepHistory = [];
+
+    algorithmStartNode = $("#algorithmStartNode").val();
+    !isInt(algorithmStartNode) ? algorithmStartNode = 0 : algorithmStartNode -= 1;
+
+    algorithmNumberOfRounds = $("#noRounds").val();
+    !isInt(algorithmNumberOfRounds) && (algorithmNumberOfRounds = 15);
+
+    algorithm = editor.getDoc().getValue();
+    compute();
+}
 
 $("#deleteModeButton").click(function() {
     $("#addModeButtons").hide();
     $("#playModeButtons").hide();
+    $(this).css("background-color", "#e6e6e6");
+    $("#addModeButton").css("background-color", "white");
     addMode = false;
-    reset(reverseHistory);
+    playing = false;
+    stepToInitialState();
     currentStep = 0;
     stepHistory = [];
-    reverseHistory = [];
     stepNumber = 0;
 });
 
 $("#addModeButton").click(function() {
     $("#addModeButtons").show();
     $("#playModeButtons").hide();
+    $(this).css("background-color", "#e6e6e6");
+    $("#deleteModeButton").css("background-color", "white");
     addMode = true;
-    reset(reverseHistory);
+    playing = false;
+    stepToInitialState();
     currentStep = 0;
     stepHistory = [];
-    reverseHistory = [];
     stepNumber = 0;
+});
+
+
+$("#minimizeEditor").click(function() {
+    if (maximized) {
+        $("#save").show();
+        $("#textEditorBorder").css("visibility", "hidden");
+        editor.getWrapperElement().style.display = "none";
+        $(this).text("Show code editor");
+        maximized = !maximized;
+    } else {
+        $("#save").hide();
+        $("#textEditorBorder").css("visibility", "visible");
+        editor.getWrapperElement().style.display = "inherit";
+        $(this).text("Minimize editor");
+        maximized = !maximized;
+    }
 });
 
 
@@ -54,7 +98,7 @@ $("#play-pause").click(function() {
 $("#backward").click(function() {
     $("#play-pause").find(">:first-child").attr("class", "fa fa-play");
     playing = false;
-    playBackward(reverseHistory);
+    playBackward(stepHistory);
 });
 
 $("#forward").click(function() {
@@ -66,8 +110,6 @@ $("#forward").click(function() {
 // Handler for the "Add node" button
 $("#addNodeButton").click(function() { addNode(graphArea); });
 
-
-
 // Handler for the "Add edge" button
 $("#addEdgeButton").click(function() {addEdge(graphArea, false);});
 $("#addDirEdgeButton").click(function() {addEdge(graphArea, true); });
@@ -77,7 +119,7 @@ $("body").click(function() {
         $("#startNode").val("Start");
         $("#endNode").val("End");
         $("#nodeText").val("Node text");
-        $("#weight").val("Weight")})
+        $("#weight").val("Weight");})
     .find("#weight")
     .on("click", function(e) {
         e.stopPropagation();
@@ -100,5 +142,6 @@ $("#endNode").click(function() {$(this).val("")});
 $("#weight").click(function() {$(this).val("")});
 $("#nodeText").click(function () {$(this).val("")});
 $("#noRounds").click(function () {$(this).val("")});
+$("#algorithmStartNode").click(function () {$(this).val("")});
 
 

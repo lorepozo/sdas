@@ -27,18 +27,14 @@
 (load "scheme/dist.scm")
 (define (input-parser)
   (let* ((inp (js-to-scheme))
-         (graph inp))
-    (make-alg-args (list->vector (map
-                                   (lambda (l)
-                                     (list->vector (map
-                                                     (lambda (i)
-                                                       (if (= 0 i) '() i))
-                                                     l)))
-                                   graph))
-                   15
-                   4)))
+         (graph (car inp))
+         (num-nodes (cadr inp))
+         (start-node (caddr inp)))
+    (make-alg-args (list->vector (map list->vector graph))
+                   num-nodes
+                   start-node)))
 
 ;(load "scheme/algs/bellman_ford.scm")
-(load "scheme/algs/leader_elect.scm")
-(output-parser (runtime (input-parser)))
+;(load "scheme/algs/leader_elect.scm")
+;(output-parser (runtime (input-parser)))
 

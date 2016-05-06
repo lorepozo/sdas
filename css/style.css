@@ -2,8 +2,12 @@ h2, h3 {
     text-align : center;
 }
 
+#top-hr {
+    margin-top:0;
+}
+
 hr {
-    margin-top : 0px;
+    margin-top : 20px;
     margin-bottom : 10px;
 }
 
@@ -15,11 +19,23 @@ hr {
     display : inline;
 }
 
-.integer-input {
-    width: 70px;
+
+#noRounds {
+    width : 140px;
+}
+
+#algorithmStartNode {
+    width : 100px;
+}
+
+.form-control {
     display: inline;
     text-align: right;
     color: rgba(0, 0, 0, 0.5);
+}
+
+.integer-input {
+    width: 70px;
 }
 
 #nodeText {
@@ -50,7 +66,6 @@ circle {
 }
 
 .padded-row {
-    margin-top : 10px;
     margin-bottom : 10px;
 }
 
@@ -64,13 +79,16 @@ circle {
     border-radius: 20px;
 }
 
-#noRounds{
-    display : inline;
-    width : 130px;
-    text-align: right;
-    color: rgba(0, 0, 0, 0.5);
-}
 
 #graph-drawing {
     margin-top : 10px;
 }
+
+#addNodeButton {
+    margin-left : 20px;
+}
+
+[id^=tn] {
+    fill : black;
+}
+

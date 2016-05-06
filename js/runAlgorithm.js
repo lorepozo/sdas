@@ -2,15 +2,14 @@
  * Created by Moan on 04/05/16.
  */
 
-var step;
+var step = {"textNode" : [], "textEdge" : [], "highlightNode" : [], "highlightEdge" : []};
 var stepHistory;
 var currentStep = 0;
-var reverseHistory = [];
-var autoplayDelay = 1000;
+var autoplayDelay = 2000;
+var initialState;
 
 
-/* Test data.
-
+/*
 var testStepHistory1 = [];
 var testStepHistory2 = [];
 
@@ -65,13 +64,15 @@ function playForward(stepHistory) {
     }, autoplayDelay);
 }
 
-function playBackward(reverseHistory) {
-    if(!(currentStep == 0)) {
+function playBackward(stepHistory) {
+    if(currentStep == 1) {
+        stepToInitialState();
         currentStep--;
-        stepBackward(reverseHistory[currentStep]);
-        return true;
-    }
+    } else if (currentStep > 1) {
+        stepForward(stepHistory[currentStep-2]);
+        currentStep--;
 
+    }
 }
 
 function playOneStepForward(stepHistory) {
@@ -82,44 +83,64 @@ function playOneStepForward(stepHistory) {
     }
 }
 
-function reset(reverseHistory) {
-    while(playBackward(reverseHistory));
-}
-
 function stepForward(step) {
-    var currentState = {"textNode":[], "highlightNode":[], "textEdge":[], "highlightEdge":[]};
+    if(currentStep != 0){
+        stepToInitialState();
+    }
 
     step.textNode.forEach(function(d) {
-        var thisState = {"node": d.node, "text": getCurrentNodeText(d.node)};
-        currentState.textNode.push(thisState);
         changeNodeText(d.node,d.text);
     });
 
     step.highlightNode.forEach(function(d) {
-        var thisState = {"node": d.node, "color": getCurrentNodeColor(d.node)};
-        currentState.highlightNode.push(thisState);
         setNodeColor(d.node, d.color);
     });
 
     step.textEdge.forEach(function(d) {
-        var thisState = {"start": d.start, "end":d.end, "text": getCurrentEdgeText(d.start,d.end)};
-        currentState.textEdge.push(thisState);
         changeEdgeText(d.start,d.end,d.text)
     });
 
     step.highlightEdge.forEach(function(d) {
-        var thisState = {"start": d.start, "end":d.end, "color": getCurrentEdgeColor(d.start,d.end)};
-        currentState.highlightEdge.push(thisState);
         setEdgeColor(d.start,d.end,d.color)
     });
-    reverseHistory.push(currentState);
 }
 
-function stepBackward(step) {
-    step.textNode.forEach(function(d) {changeNodeText(d.node, d.color);});
-    step.highlightNode.forEach(function(d) { setNodeColor(d.node, d.color);});
-    step.textEdge.forEach(function(d) { changeEdgeText(d.start,d.end,d.text)});
-    step.highlightEdge.forEach(function(d) {setEdgeColor(d.start,d.end,d.color)});
+function stepToInitialState(){
+    if(initialState == null) {
+        return;
+    }
+    initialState.textNode.forEach(function(d) {
+        changeNodeText(d.node,d.text);
+    });
+
+    initialState.highlightNode.forEach(function(d) {
+        setNodeColor(d.node, d.color);
+    });
+
+    initialState.textEdge.forEach(function(d) {
+        changeEdgeText(d.start,d.end,d.text)
+    });
+
+    initialState.highlightEdge.forEach(function(d) {
+        setEdgeColor(d.start,d.end,d.color)
+    });
+}
+
+function setInitialState() {
+    initialState = {"textNode":[], "highlightNode": [], "textEdge": [], "highlightEdge": []};
+
+    $.each($("[id^=n]circle"), function(i, node) {
+        var nodeNumber = node.id.slice(1);
+        initialState.textNode.push({"node": nodeNumber, "text": getNodeText(nodeNumber)});
+        initialState.highlightNode.push({"node": nodeNumber, "color": getNodeColor(nodeNumber)});
+    });
+
+    $.each($("[id^=uln],[id^=dln]"), function(i, edge) {
+        var start = edge.id.slice(3, edge.id.indexOf("-"));
+        var end = edge.id.slice(edge.id.indexOf("-")+2);
+        initialState.textEdge.push({"start": start, "end": end, "text": getEdgeText(start,end)});
+        initialState.highlightEdge.push({"start": start, "end": end, "color": getEdgeColor(start, end)});
+    })
 }
 
 function setNodeColor(node, color) {
@@ -155,15 +176,15 @@ function changeNodeText(node, text) {
     }
 }
 
-function getCurrentNodeText(node) {
+function getNodeText(node) {
     return $("#nodeText" + node).text();
 }
 
-function getCurrentNodeColor(node) {
+function getNodeColor(node) {
     return $("#n" + node).css("stroke");
 }
 
-function getCurrentEdgeText(start,end) {
+function getEdgeText(start,end) {
     var edge;
     if(!((edge = $("#tn" + start + "-n" + end)).length)) {
         return $("#tn" + end + "-n" + start).text();
@@ -171,7 +192,7 @@ function getCurrentEdgeText(start,end) {
     return edge.text();
 }
 
-function getCurrentEdgeColor(start,end) {
+function getEdgeColor(start,end) {
     var idString = "n" + start + "-n" + end;
     var edge;
     if(!((edge = $("#ul" + idString)).length)){
