@@ -14,9 +14,16 @@ function playForward(stepHistory) {
             $('#stepCounter').text(currentStep+1);
             stepForward(stepHistory[currentStep]);
             currentStep++;
+            if(currentStep >= steps) {
+                $("#play-pause").find(">:first-child").attr("class", "fa fa-play");
+                endReached = true;
+                playing = false;
+            }
         } else {
+            $("#play-pause").find(">:first-child").attr("class", "fa fa-play");
+            endReached = true;
+            playing = false;
             clearInterval(playId);
-            $("#play-pause").click();
         }
     }, autoplayDelay);
 }
@@ -29,6 +36,7 @@ function playBackward(stepHistory) {
         stepForward(stepHistory[currentStep-2]);
         currentStep--;
     }
+    endReached = false;
     $('#stepCounter').text(currentStep);
 }
 

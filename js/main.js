@@ -2,11 +2,14 @@
  * Created by Moan on 28/04/16.
  */
 
+/* TODO: local storage, self-edges, maximize/minimize animation, clean code, mode selection rectangle*/
+
 var adjacencyMatrix = [];
 var edgeDirectedMatrix = [];
 var graphArea = new DrawingArea("graph-drawing");
 var playing = false;
 var maximized = false;
+var endReached = false;
 
 var autoGenerateRandomizer = 0;
 
@@ -31,9 +34,9 @@ $("#autoGenerate").click(function() {
 
 // Mode changing
 $("#save").hide();
-$("#playModeButtons").hide();
+$(".playModeButtons").hide();
 $("#playModeButton").click(function() {
-    $("#playModeButtons").show();
+    $(".playModeButtons").show();
     $('#stepCounter').show();
     $("#addModeButtons").hide();
     $("#addModeButton").removeClass("active");
@@ -59,7 +62,7 @@ function play() {
 
 $("#deleteModeButton").click(function() {
     $("#addModeButtons").hide();
-    $("#playModeButtons").hide();
+    $(".playModeButtons").hide();
     $('#stepCounter').hide();
     $(this).addClass("active");
     $("#addModeButton").removeClass("active");
@@ -73,7 +76,7 @@ $("#deleteModeButton").click(function() {
 
 $("#addModeButton").click(function() {
     $("#addModeButtons").show();
-    $("#playModeButtons").hide();
+    $(".playModeButtons").hide();
     $('#stepCounter').hide();
     $(this).addClass("active");
     $("#deleteModeButton").removeClass("active");
@@ -88,13 +91,13 @@ $("#addModeButton").click(function() {
 
 $("#minimizeEditor").click(function() {
     if (maximized) {
-        $("#save").show();
+        $("#save").hide();
         $("#textEditorBorder").css("visibility", "hidden");
         editor.getWrapperElement().style.display = "none";
         $(this).text("Show code editor");
         maximized = !maximized;
     } else {
-        $("#save").hide();
+        $("#save").show();
         $("#textEditorBorder").css("visibility", "visible");
         editor.getWrapperElement().style.display = "inherit";
         $(this).text("Minimize editor");
@@ -105,14 +108,21 @@ $("#minimizeEditor").click(function() {
 
 // Mechanisms for play-pause, backwards and forward
 $("#play-pause").click(function() {
-    $(this).find(">:first-child").attr("class", function() {
-        if(playing) {
-            return "fa fa-play";
-        } return "fa fa-pause";
-    });
-    playing = !playing;
-    playing && playForward(stepHistory);
+    if(playing) {
+        $(this).find(">:first-child").attr("class", "fa fa-play");
+        playing = false;
+        return;
+    } else {
+        if (endReached) {
+            return;
+        } else {
+            $(this).find(">:first-child").attr("class", "fa fa-pause");
+            playForward(stepHistory);
+            playing = true;
+        }
+    }
 });
+
 
 $("#backward").click(function() {
     $("#play-pause").find(">:first-child").attr("class", "fa fa-play");
