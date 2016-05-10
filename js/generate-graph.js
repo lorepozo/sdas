@@ -29,11 +29,12 @@ function genAddCoordinates(vis) {
             .attr("dy", coordinate[1]-radius)
             .attr("dx", coordinate[0]-radius)
             .attr("fill", themeColor)
+            .attr("color", themeColor)
             .attr("font-size", themeChangedFontSize)
             .attr("font-weight", themeFontWeight)
             .attr("id", "nodeText" + vis.nodeCounter);
 
-        var drag = d3.behavior.drag().on("drag", dragmove)
+        var drag = d3.behavior.drag().on("drag", dragMove)
             .on("dragstart", startDrag)
             .on("dragend", endDrag);
 

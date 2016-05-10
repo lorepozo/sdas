@@ -2,22 +2,24 @@
  * Created by Moan on 28/04/16.
  */
 
-
 var width;
 var height = window.innerHeight/1.6;
-var radius = 25;
-var arrowSize = 100;
-var curveWidth = 30;
+
+// Node and edge
+var radius = 25;        // Radius of nodes
+var arrowSize = 100;    // Size of directed edge arrow
+var curveWidth = 30;    // Curve width for curved edges
+var angle = Math.PI/2.0;
+
+// Styling
 var themeColor = "black";
 var themeFontSize = "12pt";
 var themeEdgeWeightFontSize = "8pt";
 var themeChangedFontSize = "16pt";
 var themeEdgeChangedFontSize = themeFontSize;
 var themeFontWeight = "bold";
-var addMode = true;
 
-var nodeX, nodeY;
-var angle = Math.PI/2.0;
+
 
 DrawingArea = function(_parentElement) {
     this.parentElement = _parentElement;
@@ -30,8 +32,6 @@ DrawingArea.prototype.initVis = function() {
     width = document.getElementById(vis.parentElement).getBoundingClientRect().width;
     vis.width = width;
     vis.height = height;
-
-    vis.margin = {top: 20, right: 20, left: 20, bottom: 20};
 
     vis.svg = d3.select("#" + vis.parentElement).append("svg")
         .attr("width", vis.width)
@@ -62,8 +62,7 @@ DrawingArea.prototype.initVis = function() {
 // Function for adding a node to the middle of the drawing area
 function addNode(vis) {
 
-    var position = calcNextXY(100, angle);
-    angle = position[2];
+    var position = calcNextXY(100);
 
     var node = vis.svg.append("g")
         .attr("height", 30)
@@ -74,9 +73,9 @@ function addNode(vis) {
         .attr("text-anchor", "middle")
         .attr("dx", position[0])
         .attr("dy", position[1] + 5)
-        .attr("fill", themeColor)
         .attr("font-size", themeFontSize)
         .attr("font-weight", themeFontWeight)
+        .attr("fill", themeColor)
         .attr("id", "tn" + vis.nodeCounter)
         .text(vis.nodeCounter);
 
@@ -84,13 +83,12 @@ function addNode(vis) {
         .attr("text-anchor", "middle")
         .attr("dy", position[1]-radius)
         .attr("dx", position[0]-radius)
-        .attr("fill", themeColor)
         .attr("font-size", themeChangedFontSize)
         .attr("font-weight", themeFontWeight)
         .attr("id", "nodeText" + vis.nodeCounter);
 
     var drag = d3.behavior.drag()
-        .on("drag", dragmove)
+        .on("drag", dragMove)
         .on("dragstart", startDrag)
         .on("dragend", endDrag);
 
@@ -111,8 +109,8 @@ function addNode(vis) {
                 removeAllEdges(id);
                 $(this).parent().remove();
                 $("#t" + id).remove();
-                removeNodeFromMatrix(id.slice(1));
-                changeNodeNumbering(id.slice(1));
+                removeNodeFromMatrix(parseInt(id.slice(1)));
+                changeNodeNumbering(parseInt(id.slice(1)));
                 vis.nodeCounter--;
             }
         })
@@ -166,8 +164,7 @@ function addEdge(vis, directed) {
         checkIfDirected(startNode, endNode) && removeEdge(startNode, endNode, true);
         checkIfDirected(endNode, startNode) && removeEdge(endNode, startNode, true);
     }
-
-
+    
     if(directed) {
         addDirectedEdge(vis, startNode, endNode, calcCoord, weight, curve);
     } else {
@@ -175,28 +172,41 @@ function addEdge(vis, directed) {
     }
 };
 
+
 function addUndirectedEdge(vis, startNode, endNode, calcCoord, weight) {
     addEdgeToMatrix(startNode, endNode, weight);
     addEdgeToMatrix(endNode, startNode, weight);
 
     vis.g.append("path")
-        .attr("d", "M " + calcCoord.x1 + " " + calcCoord.y1 + " L " + calcCoord.x2 + " " + calcCoord.y2 )
+        .attr("d", function(){
+            if(startNode == endNode){
+                return calcSelfEdgeCoords(startNode);
+            }
+            return "M " + calcCoord.x1 + " " + calcCoord.y1 + " L " + calcCoord.x2 + " " + calcCoord.y2;
+        })
         .attr("class", "edge")
         .attr("id", "uln" + startNode + "-n" + endNode)
         .on("click", function() {
-            !addMode && removeEdge(startNode, endNode, false);
+            if(!addMode) {
+                var id = $(this).attr("id");
+                var start = id.slice(3, id.indexOf("-"));
+                var end = id.slice(id.indexOf("-") + 2);
+                removeEdge(start, end, false);
+            }
         });
 
     vis.g.append("text")
         .attr("text-anchor", "middle")
-        .attr("transform", calcEdgeTextPosition(calcCoord, 15))
+        .attr("transform",
+            (startNode == endNode) ? calcSelfEdgeTextPosition(startNode,60) : calcEdgeTextPosition(calcCoord, 15))
         .attr("font-size", themeEdgeChangedFontSize)
         .attr("font-weight", themeFontWeight)
         .attr("id", "tn" + startNode + "-n" + endNode);
 
     vis.g.append("text")
         .attr("text-anchor", "middle")
-        .attr("transform", calcStaticEdgeTextPosition(calcCoord, 10))
+        .attr("transform",
+            (startNode == endNode) ? calcSelfEdgeTextPosition(startNode,32) : calcStaticEdgeTextPosition(calcCoord, 10))
         .attr("id", "stn" + startNode + "-n" + endNode)
         .attr("font-size", themeEdgeWeightFontSize)
         .text(isNaN(weight) ? "" : weight);
@@ -210,7 +220,12 @@ function addDirectedEdge(vis, startNode, endNode, calcCoord, weight, curve) {
         .attr("class", "edge")
         .attr("id", "dln" + startNode + "-n" + endNode)
         .on("click", function() {
-            !addMode && removeEdge(startNode, endNode, true);
+            if(!addMode) {
+                var id = $(this).attr("id");
+                var start = id.slice(3, id.indexOf("-"));
+                var end = id.slice(id.indexOf("-") + 2);
+                removeEdge(start, end, true);
+            }
         });
 
     // Add text
@@ -223,7 +238,8 @@ function addDirectedEdge(vis, startNode, endNode, calcCoord, weight, curve) {
 
     vis.g.append("text")
         .attr("text-anchor", "middle")
-        .attr("transform", calcStaticEdgeTextPosition(calcCoord, 10))
+        .attr("transform",
+            (startNode == endNode) ? calcSelfEdgeTextPosition(startNode,32) : calcStaticEdgeTextPosition(calcCoord, 10))
         .attr("font-size", themeEdgeWeightFontSize)
         .attr("id", "stn" + startNode + "-n" + endNode)
         .text(isNaN(weight) ? "" : weight);
@@ -234,14 +250,35 @@ function addDirectedEdge(vis, startNode, endNode, calcCoord, weight, curve) {
         .attr("id", "an" + startNode + "-n" + endNode);
 
     // Add line
-    curve ? setPathCurved(startNode, endNode) : setPathStraight(startNode, endNode, true);
+    if(startNode != endNode) {
+        curve ? setPathCurved(startNode, endNode) : setPathStraight(startNode, endNode, true);
+    } else {
+        setPathSelf(startNode, true);
+    }
+
+}
+
+function setPathSelf(node, directed) {
+    if (directed){
+        d3.select("#dln" + node + "-n" + node)
+            .attr("d", calcSelfEdgeCoords(node));
+        d3.select("#an" + node + "-n" + node)
+            .attr("transform", calcSelfEdgeTextPosition(node, 49) + ", rotate(90)");
+    } else {
+        d3.select("#uln" + node + "-n" + node)
+            .attr("d", calcSelfEdgeCoords(node));
+    }
+    d3.select("#tn" + node + "-n" + node)
+        .attr("transform", calcSelfEdgeTextPosition(node, 60));
+    d3.select("#stn" + node + "-n" + node)
+        .attr("transform", calcSelfEdgeTextPosition(node, 32));
 }
 
 function setPathCurved(startNode, endNode) {
     var calcCoord = calcXY(startNode, endNode);
 
     d3.select("#dln" + startNode + "-n" + endNode)
-        .attr("d", calcAnglePoints(calcCoord));
+        .attr("d", calcAnglePoints(calcCoord, curveWidth));
 
     d3.select("#an" + startNode + "-n" + endNode)
         .attr("transform", calcArrowPosition(calcCoord, 22));
@@ -273,14 +310,15 @@ function setPathStraight(startNode, endNode, directed) {
 }
 
 
-function dragmove() {
+function dragMove() {
+    if(!addMode) {return;}
     var circle = d3.select(this);
     circle
         .attr("cx", Math.max(Math.min(d3.event.x, (width/2.0) - radius - 7), -(width/2.0) + radius + 1))
         .attr("cy", Math.max(Math.min(d3.event.y, (height/2.0) - radius - 7), -(height/2.0) + radius + 1));
 
     var circleNo = circle.attr("id").slice(1);
-
+    
     var directed_start = "[id^=dl" + circle.attr("id") + "-]";
     var directed_end = "[id$=-" + circle.attr("id") + "]:not([id^=a]):not([id^=t]):not([id^=u])";
     var undirected_start = "[id^=ul" + circle.attr("id") + "-]";
@@ -290,21 +328,24 @@ function dragmove() {
     for(var i = 0; i < whereStart[0].length; i++) {
         var line = d3.select(whereStart[0][i]);
         var endId = line.attr("id").slice(line.attr("id").indexOf("-") + 2);
-        setPathStraight(circleNo, endId);
+        (circleNo == endId) ? setPathSelf(circleNo, false) : setPathStraight(circleNo, endId);
     };
 
     var whereEnd = d3.selectAll(undirected_end);
     for(var i = 0; i < whereEnd[0].length; i++) {
         var line = d3.select(whereEnd[0][i]);
         var startId = line.attr("id").slice(3,line.attr("id").indexOf("-"));
-        setPathStraight(startId, circleNo);
+        (circleNo == startId) ? setPathSelf(circleNo, false) : setPathStraight(startId, circleNo);
     };
 
     var whereStart = d3.selectAll(directed_start);
     for(var i = 0; i < whereStart[0].length; i++) {
         var line = d3.select(whereStart[0][i]);
         var endId = line.attr("id").slice(line.attr("id").indexOf("-") + 2);
-
+        if(circleNo == endId) {
+            setPathSelf(circleNo, true);
+            continue;
+        }
         if (checkIfDirected(endId, circleNo)) {
             setPathCurved(circleNo, endId);
         } else {
@@ -316,7 +357,10 @@ function dragmove() {
     for(var i = 0; i < whereEnd[0].length; i++) {
         var line = d3.select(whereEnd[0][i]);
         var startId = line.attr("id").slice(3,line.attr("id").indexOf("-"));
-
+        if(circleNo == startId) {
+            setPathSelf(circleNo, true);
+            continue;
+        }
         if (checkIfDirected(circleNo, startId)) {
             setPathCurved(startId, circleNo);
         } else {
@@ -326,11 +370,13 @@ function dragmove() {
 }
 
 function startDrag() {
+    if(!addMode) {return;}
     d3.select(this.parentElement).selectAll("text").attr("visibility", "hidden");
     d3.select(this).attr("fill-opacity", 1);
 }
 
 function endDrag() {
+    if(!addMode) {return;}
     d3.select(this).attr("fill-opacity", 0);
     var textElements = d3.select(this.parentElement).selectAll("text");
     d3.select(textElements[0][0])
@@ -344,6 +390,11 @@ function endDrag() {
         .attr("visibility", "visible");
 }
 
+
+/**
+ * Removes all edges connected to node
+ * @param node
+ */
 function removeAllEdges(node) {
     var directed_start = "[id^=dl" + node + "-]";
     var directed_end = "[id$=-" + node + "]:not([id^=a]):not([id^=t]):not([id^=u])";
@@ -379,15 +430,16 @@ function removeAllEdges(node) {
     }
 }
 
+
 function removeEdge(startNode, endNode, directed) {
     $("#tn" + startNode + "-n" + endNode).remove();
-    $("#tn" + endNode + "-n" + startNode).remove();
     $("#stn" + startNode + "-n" + endNode).remove();
-    $("#stn" + endNode + "-n" + startNode).remove();
     if (directed) {
         $("#an" + startNode + "-n" + endNode).remove();
         $("#dln" + startNode + "-n" + endNode).remove();
     } else {
+        $("#tn" + endNode + "-n" + startNode).remove();
+        $("#stn" + endNode + "-n" + startNode).remove();
         $("#uln" + startNode + "-n" +  endNode).remove();
         $("#uln" + endNode + "-n" + startNode).remove();
         removeEdgeFromMatrix(endNode, startNode);
@@ -395,80 +447,77 @@ function removeEdge(startNode, endNode, directed) {
     removeEdgeFromMatrix(startNode, endNode);
 }
 
+
 function updateWeight(startNode, endNode, newWeight, directed) {
-    if(directed) {
-        var textElement = document.getElementById("dln" + startNode + "-n" + endNode).nextElementSibling;
-    } else {
-        try {
-            var textElement = document.getElementById("uln" + startNode + "-n" + endNode).nextElementSibling;
-        } catch (TypeError) {
-            var textElement = document.getElementById("uln" + endNode + "-n" + startNode).nextElementSibling;
-        }
-    }
-    textElement.innerHTML = (isNaN(newWeight) ? "" : newWeight);
+    newWeight = isNaN(newWeight) ? "" : newWeight;
+    $("#stn" + startNode + "-n" + endNode).html(newWeight);
+    !directed && $("#stn" + endNode + "-n" + startNode).html(newWeight);
 }
 
-function changeNodeNumbering(nodeId) {
-    var edgeTextsDyn = [];
-    var edgeTextsStat = [];
-    var edgeArrows = [];
 
+/**
+ * Updates all id's being higher than nodeId
+ * @param nodeId
+ */
+function changeNodeNumbering(nodeId) {
+    // Change id of all nodes with id higher than nodeId
     $.each($("[id^=n]circle"), function(i, node) {
-        var currentId = $(node).attr("id").slice(1);
+        var currentId = parseInt($(node).attr("id").slice(1));
         if (currentId > nodeId) {
             $(node).attr("id", "n" + (currentId - 1));
             $(node).parent().find("#tn" + currentId).attr("id", "tn" + (currentId - 1)).text(currentId-1);
             $(node).parent().find("#nodeText" + currentId).attr("id", "nodeText" + (currentId - 1));
         }
     });
-    $.each($("[id^=uln]"), function(i, edge) {
+
+    var edgeTextsDyn = [];
+    var edgeTextsStat = [];
+    var edgeArrows = [];
+
+    // Change id of all edges with start or end id higher than nodeId
+    $.each($("[id^=uln]"), function(i, edge) { changeIdEdge(false, edge); });
+    $.each($("[id^=dln]"), function(i, edge) { changeIdEdge(true, edge); });
+
+    // Change id of all arrows and edgeTexts with start or end id higher than nodeId
+    [edgeTextsDyn, edgeTextsStat, edgeArrows].forEach(function(list) {
+        list.forEach(function(item) { $(item[0]).attr("id", item[3] + "n" + item[1] + "-n" + item[2]); })
+    });
+
+    function changeIdEdge(isDirected, edge) {
         var currId = $(edge).attr("id");
-        var start = currId.slice(3, currId.indexOf("-"));
-        var end = currId.slice(currId.indexOf("-") + 2);
+        var start = parseInt(currId.slice(3, currId.indexOf("-")));
+        var end = parseInt(currId.slice(currId.indexOf("-") + 2));
         var edgeText1 = $(edge).parent().find("#tn" + start + "-n" + end);
         var edgeText2 = $(edge).parent().find("#stn" + start + "-n" + end);
+
+        if(isDirected) {
+            var arrow = $(edge).parent().find("#an" + start + "-n" + end);
+        }
+
         (start > nodeId) && (start--);
         (end > nodeId)   && (end--);
-        edgeTextsDyn.push([edgeText1,start,end]);
-        edgeTextsStat.push([edgeText2,start,end]);
-        $(edge).attr("id", "uln" + start + "-n" + end);
-    });
+        edgeTextsDyn.push([edgeText1,start,end, "t"]);
+        edgeTextsStat.push([edgeText2,start,end, "st"]);
 
-    $.each($("[id^=dln]"), function(i, edge) {
-        var currId = $(edge).attr("id");
-        var start = currId.slice(3, currId.indexOf("-"));
-        var end = currId.slice(currId.indexOf("-") + 2);
-        var edgeText1 = $(edge).parent().find("#tn" + start + "-n" + end);
-        var edgeText2 = $(edge).parent().find("#stn" + start + "-n" + end);
-        var arrow = $(edge).parent().find("#an" + start + "-n" + end);
-        (start > nodeId) && (start--);
-        (end > nodeId)   && (end--);
-        edgeArrows.push([arrow,start,end]);
-        edgeTextsDyn.push([edgeText1,start,end]);
-        edgeTextsStat.push([edgeText2,start,end]);
-        $(edge).attr("id", "dln" + start + "-n" + end);
-    });
-    edgeTextsDyn.forEach(function(text) {
-        $(text[0]).attr("id", "tn" + text[1] + "-n" + text[2]);
-    });
-
-    edgeTextsStat.forEach(function(text) {
-        $(text[0]).attr("id", "stn" + text[1] + "-n" + text[2]);
-    });
-
-    edgeArrows.forEach(function(arrow) {
-        $(arrow[0]).attr("id", "an" + arrow[1] + "-n" + arrow[2]);
-    })
-}
-
-function isInt(value) {
-    if (isNaN(value)) {
-        return false;
+        if (isDirected) {
+            edgeArrows.push([arrow,start,end, "a"]);
+            $(edge).attr("id", "dln" + start + "-n" + end);
+        } else {
+            $(edge).attr("id", "uln" + start + "-n" + end);
+        }
     }
-    var x = parseFloat(value);
-    return (x | 0) === x;
 }
 
-function isEmptyList(value) {
-    return value.isArray && (value.length == 0)
-}
+
+DrawingArea.prototype.removeAllNodes = function() {
+    var vis = this;
+    $.each($("circle[id^=n]"), function(i, node) {
+        var id = $(node).attr("id");
+        removeAllEdges(id);
+        $(node).parent().remove();
+        $("#t" + id).remove();
+        removeNodeFromMatrix(parseInt(id.slice(1)));
+        changeNodeNumbering(parseInt(id.slice(1)));
+        vis.nodeCounter--;
+    })
+};

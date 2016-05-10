@@ -3,7 +3,6 @@
  */
 
 var editor;
-addEditor();
 
 function addEditor() {
     var textArea = document.getElementById("editorArea");
@@ -17,13 +16,9 @@ function addEditor() {
     editor.getWrapperElement().style.display = "none";
 }
 
-function addDropdownHandlers() {
 
-}
 
-addDropdownOptions();
-
-function addDropdownOptions() {
+function addDefaultDropdownOptions() {
     var dropdown = document.getElementById("algorithm-dropdown");
     [].forEach.call(dropdown.children, function(choice) {
         choice.firstElementChild.onclick = function() {
@@ -32,9 +27,9 @@ function addDropdownOptions() {
             x.open("GET", "scheme/algs/" + fileName + ".scm", true);
             x.onload = function() {
                 editor.getWrapperElement().style.display = "inherit";
-                editor.getDoc().setValue(";;; Scheme code editor ;;;\n " + this.responseText);
+                editor.getDoc().setValue(" ;;; Scheme code editor ;;;\n " + this.responseText);
                 if (!maximized) { editor.getWrapperElement().style.display = "none"; }
-            }
+            };
             x.send();
             $("#dropdown").html(this.innerHTML + " <span class=\"caret\"></span>");
         }
@@ -46,6 +41,6 @@ var x = new XMLHttpRequest();
 x.open("GET", "scheme/algs/luby_mis.scm", true);
 x.onload = function() {
     editor.getDoc().setValue(";;; Scheme code editor ;;;\n " + this.responseText);
-}
+};
 x.send();
 

@@ -12,7 +12,7 @@ function addNewNodeToMatrix() {
         });
         edgeDirectedMatrix.forEach(function(list) {
             list.push(false);
-        })
+        });
         adjacencyMatrix.push(Array(adjacencyMatrix[0].length).fill([]));
         edgeDirectedMatrix.push(Array(edgeDirectedMatrix[0].length).fill(false));
     }

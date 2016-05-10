@@ -1,49 +1,46 @@
+/***********/
+/* GENERAL */
+/***********/
+
 h2, h3 {
     text-align : center;
+}
+hr {
+    margin-top : 20px;
+    margin-bottom : 0px;
 }
 
 #top-hr {
     margin-top:0;
 }
 
-hr {
-    margin-top : 20px;
+.padded-row {
     margin-bottom : 10px;
 }
 
-.form-group {
-    margin-top : 20px;
-}
+
 
 .dropdown{
     display : inline;
 }
 
+/***************/
+/* TEXT EDITOR */
+/***************/
 
-#noRounds {
-    width : 140px;
+.CodeMirror {
+    font-size : 10px;
 }
 
-#algorithmStartNode {
-    width : 100px;
+#textEditorBorder {
+    border:solid;
+    margin-bottom:10px;
+    visibility:hidden;
 }
 
-.form-control {
-    display: inline;
-    text-align: right;
-    color: rgba(0, 0, 0, 0.5);
-}
-
-.integer-input {
-    width: 70px;
-}
-
-#nodeText {
-    width : 100px;
-    display : inline;
-    text-align: right;
-    color: rgba(0, 0, 0, 0.5);
-}
+/*********/
+/* GRAPH */
+/*********/
 
 svg {
     border-style: solid;
@@ -55,18 +52,27 @@ circle {
     stroke-width : 2px;
 }
 
-.node text {
-    font: 10px sans-serif;
-}
-
 .edge {
     stroke-width : 1;
     fill : none;
     stroke : black;
 }
 
-.padded-row {
-    margin-bottom : 10px;
+.node text {
+    font: 10px sans-serif;
+}
+
+#graph-drawing {
+    margin-top : 10px;
+}
+
+
+/***********/
+/* BUTTONS */
+/***********/
+
+.btn {
+    vertical-align : top;
 }
 
 .btn-circle {
@@ -79,24 +85,37 @@ circle {
     border-radius: 20px;
 }
 
-
-#graph-drawing {
-    margin-top : 10px;
-}
-
 #addNodeButton {
     margin-left : 20px;
 }
 
-[id^=tn] {
-    fill : black;
+
+/***************/
+/* INPUT FORMS */
+/***************/
+
+.form-control {
+    display: inline;
+    text-align: right;
+    color: rgba(0, 0, 0, 0.5);
 }
 
-.btn-mode.active {
-  background-color:white;
-  color:black;
+.integer-input {
+    width: 70px;
 }
 
-.btn {
-    vertical-align : top;
+#noRounds {
+    width : 155px;
+}
+
+#algorithmStartNode {
+    width : 110px;
+}
+
+#weight {
+    width : 80px;
+}
+
+.ja_body form input {
+    width : 100%;
 }

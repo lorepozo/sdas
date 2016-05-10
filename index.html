@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/bootstrap.cosmo.min.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/codemirror.css">
+    <link rel="stylesheet" href="jAlert-master/src/jAlert-v3.css" />
 
     <!-- Load local CSS stylesheets -->
     <link rel="stylesheet" href="css/style.css">
@@ -26,28 +27,32 @@
 
         <div class="row">
             <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
-                <div style="border:solid; margin-bottom:10px; visibility:hidden;" id="textEditorBorder">
-                    <textarea id="editorArea" rows="4" cols="10">;;; Scheme code editor ;;;</textarea>
+                <div id="textEditorBorder">
+                    <textarea id="editorArea" rows="4" cols="10"> ;;; Scheme code editor ;;;</textarea>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 text-center">
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" id="dropdown" type="button" data-toggle="dropdown">
-                            Choose algorithm <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" id="algorithm-dropdown">
-                            <li><a>Bellman Ford</a></li>
-                            <li><a>Leader elect</a></li>
-                            <li><a>Luby MIS</a></li>
-                        </ul>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2 text-center">
+                    <div class="pull-left save">
+                        <button type="button" class="btn btn-primary" id="save">Save algorithm</button>
+                        <button type="button" class="btn btn-primary" id="saveAs">Save algorithm as</button>
                     </div>
-                    <button type="button" class="btn btn-primary" id="save">Save as algorithm</button>
-                    <button type="button" class="btn btn-primary" id="minimizeEditor">Show code editor</button>
+                    <div class="pull-right">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" id="dropdown" type="button" data-toggle="dropdown">
+                                Choose algorithm <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" id="algorithm-dropdown">
+                                <li><a>Bellman Ford</a></li>
+                                <li><a>Leader elect</a></li>
+                                <li><a>Luby MIS</a></li>
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="minimizeEditor" href="#">Show code editor</button>
+                    </div>
             </div>
         </div>
-
         <hr>
 
         <div class="row padded-row">
@@ -75,9 +80,9 @@
             <div id="addModeButtons">
                 <div class="col-lg-8 col-md-8 col-sm-8">
                     <div class="pull-left">
-                        <input type="text" class="form-control integer-input" id="startNode" value="Start">
-                        <input type="text" class="form-control integer-input" id="endNode" value="End">
-                        <input type="text" class="form-control integer-input" id="weight" value="Weight" style="width:80px;">
+                        <input type="text" class="form-control integer-input" id="startNode" placeholder="Start">
+                        <input type="text" class="form-control integer-input" id="endNode" placeholder="End">
+                        <input type="text" class="form-control integer-input" id="weight" placeholder="Weight">
                         <button type="button" class="btn btn-primary" id="addEdgeButton">Add undirected edge</button>
                         <button type="button" class="btn btn-primary" id="addDirEdgeButton">Add directed edge</button>
                         <button type="button" class="btn btn-success" id="addNodeButton">Add node</button>
@@ -85,8 +90,8 @@
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-4">
                     <div class="pull-right">
-                        <input type="text" class="form-control integer-input" id="algorithmStartNode" value="Start node" style="width:110px;">
-                        <input type="text" class="form-control algorithm-input" id="noRounds" value="Number of rounds" style="width:155px;">
+                        <input type="text" class="form-control integer-input" id="algorithmStartNode" placeholder="Start node">
+                        <input type="text" class="form-control algorithm-input" id="noRounds" placeholder="Number of rounds">
                         <div class="btn btn-danger" id="playModeButton">Play</div>
                     </div>
                 </div>
@@ -101,12 +106,12 @@
                   <div class="btn btn-danger" id="playModeResetButton">Reset</div>
                 </div>
             </div>
-
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                <div class="pull-left">
+                    <div class="btn btn-primary" id="clearGraphButton">Clear graph</div>
+                </div>
+            </div>
         </div>
-
-        </div>
-
-
     </div>
 
 
@@ -114,24 +119,25 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/d3.min.js"></script>
-
-    <!-- Load local JS files -->
     <script src="js/biwascheme.js"></script>
-
-    <script src="js/geometry.js"></script>
-    <script src="js/draw-graph.js"></script>
-    <script src="js/runAlgorithm.js"></script>
-    <script src="js/matrixOperations.js"></script>
     <script src="js/codemirror.js"></script>
     <script src="mode/scheme/scheme.js"></script>
+    <script src="jAlert-master/src/jAlert-v3.js"></script>
+    <script src="jAlert-master/src/jAlert-functions.js"></script>
+
+
+    <!-- Load local JS files -->
+    <script src="js/button-handlers.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/geometry.js"></script>
+    <script src="js/draw-graph.js"></script>
+    <script src="js/run-algorithm.js"></script>
+    <script src="js/matrix-operations.js"></script>
     <script src="js/editor.js"></script>
-    <script src="js/generateGraph.js"></script>
+    <script src="js/generate-graph.js"></script>
+    <script src="js/localStorageHandling.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/runScheme.js"></script>
-    <script src="js/parseScheme.js"></script>
-
-
-
-
+    <script src="js/run-scheme.js"></script>
+    <script src="js/parse-scheme.js"></script>
 </body>
 </html>

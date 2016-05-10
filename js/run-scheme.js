@@ -13,7 +13,7 @@ function compute() {
     x.open("GET", "scheme/schemeToJS.scm", true);
     x.onload = function() {
         interpreter.evaluate(this.responseText + " " + algorithm + " " + "(output-parser (runtime (input-parser)))");
-    }
+    };
     x.send();
 }
 
