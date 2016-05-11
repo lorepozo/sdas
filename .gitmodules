@@ -1,0 +1,3 @@
+[submodule "jAlert"]
+	path = jAlert
+	url = https://github.com/VersatilityWerks/jAlert
