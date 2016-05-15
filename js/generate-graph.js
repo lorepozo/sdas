@@ -1,6 +1,4 @@
-/**
- * Created by Moan on 06/05/16.
- */
+/* default graph generators */
 
 function genAddCoordinates(vis) {
     return function(coordinate) {
@@ -49,7 +47,7 @@ function genAddCoordinates(vis) {
             .on("click", function() {
                 if (!addMode) {
                     var id = $(this).attr("id");
-                    removeAllEdges(id);
+                    removeEdges(id);
                     $(this).parent().remove();
                     $("#t" + id).remove();
                     removeNodeFromMatrix(id.slice(1));

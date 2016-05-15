@@ -1,6 +1,3 @@
-/**
- * Created by Moan on 02/05/16.
- */
 /* Geometry.js contains functions calculating the positioning of edges and nodes */
 
 /**
@@ -146,7 +143,4 @@ function getCircleCoordinates(startNode, endNode) {
 
     return result;
 }
-
-
-
 

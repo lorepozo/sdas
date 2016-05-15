@@ -1,15 +1,13 @@
-/**
- * Created by Moan on 09/05/16.
- */
+/* button handlers */
 
 $("#autoGenerate").click(function() {
     graphArea.removeAllNodes();
     switch (autoGenerateRandomizer++) {
-        case 0:  generateBellmanFordGraph(graphArea); break;
-        case 1:  generateLeaderElectGraph(graphArea); break;
-        case 2:  generateLubyMISGraph(graphArea); break;
-        default: generateMSTGraph(graphArea);
-            autoGenerateRandomizer = 0;
+    case 0:  generateBellmanFordGraph(graphArea); break;
+    case 1:  generateLeaderElectGraph(graphArea); break;
+    case 2:  generateLubyMISGraph(graphArea); break;
+    default: generateMSTGraph(graphArea);
+             autoGenerateRandomizer = 0;
     }
 });
 
@@ -17,20 +15,14 @@ $("#autoGenerate").click(function() {
 // Handling mode switching
 $("#deleteModeButton").click(function() {
     $("#addModeButtons").hide();
+    $(".playModeButtons").hide();
     $('#stepCounter').hide();
+    $("#clearGraphButton").show();
     $(this).css("background-color", "white").css("color", "black");
     $("#addModeButton").css("background-color", "black").css("color", "white");
-    $("#clearGraphButton").show();
     addMode = false;
 
-    // Resetting all algorithm related variables
-    stepToInitialState();
-    currentStep = 0;
-    $("#stepCounter").text(0);
-    stepHistory = [];
-    stepNumber = 0;
-    endReached = false;
-    playing = false;
+    reset();
 });
 
 $("#addModeButton").click(function() {
@@ -42,46 +34,41 @@ $("#addModeButton").click(function() {
     $("#deleteModeButton").css("background-color", "black").css("color", "white");
     addMode = true;
 
-    // Resetting all algorithm related variables
-    stepToInitialState();
-    currentStep = 0;
-    $("#stepCounter").text(0);
-    stepHistory = [];
-    stepNumber = 0;
-    endReached = false;
-    playing = false;
+    reset();
 });
 
 $("#playModeButton").click(function() {
+    $("#addModeButtons").hide();
     $(".playModeButtons").show();
     $('#stepCounter').show();
-    $("#addModeButtons").hide();
     $("#clearGraphButton").hide();
     $("#deleteModeButton").css("background-color", "black").css("color", "white");
     $("#addModeButton").css("background-color", "black").css("color", "white");
     addMode = true;
+
+    play();
+});
+
+$("#playModeResetButton").click(function() {
+    reset();
     play();
 });
 
 
 // Minimize/Maximize the code editor
 $("#minimizeEditor").click(function() {
+    $(".save").toggle();
+    $("#textEditorBorder").slideToggle();
     if (maximized) {
-        $(".save").hide();
-        $("#textEditorBorder").css("visibility", "hidden");
-        editor.getWrapperElement().style.display = "none";
         $(this).text("Show code editor");
-        maximized = !maximized;
     } else {
-        $(".save").show();
-        $("#textEditorBorder").css("visibility", "visible");
-        editor.getWrapperElement().style.display = "inherit";
         $(this).text("Minimize editor");
-        maximized = !maximized;
     }
+    maximized = !maximized;
 });
 
-// Saving and deleting of algorithms
+
+// Saving and deleting of stored algorithms
 $("#save").click(function() {
     save();
 });
@@ -93,19 +80,15 @@ $("#saveAs").click(function () {
 
 // Mechanisms for play-pause, backwards and forward
 $("#play-pause").click(function() {
-    if(playing) {
+    if (playing) {
         $(this).find(">:first-child").attr("class", "fa fa-play");
         playing = false;
-    } else {
-        if (!endReached) {
-            $(this).find(">:first-child").attr("class", "fa fa-pause");
-            playForward(stepHistory);
-            playing = true;
-        }
-        return;
+    } else if (!endReached) {
+        $(this).find(">:first-child").attr("class", "fa fa-pause");
+        playForward(stepHistory);
+        playing = true;
     }
 });
-
 
 $("#backward").click(function() {
     $("#play-pause").find(">:first-child").attr("class", "fa fa-play");
@@ -121,16 +104,6 @@ $("#forward").click(function() {
 
 
 
-// Handler for play mode reset button
-$("#playModeResetButton").click(function() {
-    playing = false;
-    endReached = false;
-    stepToInitialState();
-    play();
-    $("#stepCounter").text(0);
-});
-
-
 // Handler for "Clear graph" button
 $("#clearGraphButton").click(function() {
     graphArea.removeAllNodes();
@@ -144,8 +117,9 @@ $("#addEdgeButton").click(function() {addEdge(graphArea, false);});
 $("#addDirEdgeButton").click(function() {addEdge(graphArea, true); });
 
 
-
+// Handlers for enter key
 $("#endNode").keydown(function(e) {if (e.keyCode == 13) $("#addEdgeButton").click()});
 $("#weight").keydown(function(e) {if (e.keyCode == 13) $("#addDirEdgeButton").click()});
 $("#algorithmStartNode").keydown(function (e) {if (e.keyCode == 13) $("#playModeButton").click()});
 $("#noRounds").keydown(function (e) {if (e.keyCode == 13) $("#playModeButton").click()});
+

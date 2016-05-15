@@ -29,7 +29,7 @@ function playForward(stepHistory) {
 }
 
 function playBackward(stepHistory) {
-    if(currentStep == 1) {
+    if (currentStep == 1) {
         stepToInitialState();
         currentStep--;
     } else if (currentStep > 1) {
@@ -42,7 +42,7 @@ function playBackward(stepHistory) {
 
 function playOneStepForward(stepHistory) {
     var steps = stepHistory.length;
-    if(currentStep < steps) {
+    if (currentStep < steps) {
         $('#stepCounter').text(currentStep+1);
         stepForward(stepHistory[currentStep]);
         currentStep++;
@@ -50,7 +50,7 @@ function playOneStepForward(stepHistory) {
 }
 
 function stepForward(step) {
-    if(currentStep != 0){
+    if (currentStep != 0){
         stepToInitialState();
     }
 
@@ -72,7 +72,7 @@ function stepForward(step) {
 }
 
 function stepToInitialState(){
-    if(initialState == null) {
+    if (initialState == null) {
         return;
     }
     initialState.textNode.forEach(function(d) {
@@ -95,15 +95,15 @@ function stepToInitialState(){
 function setInitialState() {
     initialState = {"textNode":[], "highlightNode": [], "textEdge": [], "highlightEdge": []};
 
-    $.each($("[id^=n]circle"), function(i, node) {
-        var nodeNumber = node.id.slice(1);
+    $("[id^=n]circle").each(function() {
+        var nodeNumber = this.id.slice(1);
         initialState.textNode.push({"node": nodeNumber, "text": getNodeText(nodeNumber)});
         initialState.highlightNode.push({"node": nodeNumber, "color": getNodeColor(nodeNumber)});
     });
 
-    $.each($("[id^=uln],[id^=dln]"), function(i, edge) {
-        var start = edge.id.slice(3, edge.id.indexOf("-"));
-        var end = edge.id.slice(edge.id.indexOf("-")+2);
+    $("[id^=uln],[id^=dln]").each(function() {
+        var start = this.id.slice(3, this.id.indexOf("-"));
+        var end = this.id.slice(this.id.indexOf("-")+2);
         initialState.textEdge.push({"start": start, "end": end, "text": getEdgeText(start,end)});
         initialState.highlightEdge.push({"start": start, "end": end, "color": getEdgeColor(start, end)});
     })
@@ -165,7 +165,7 @@ function getEdgeText(start,end) {
 function getEdgeColor(start,end) {
     var idString = "n" + start + "-n" + end;
     var edge;
-    if(!((edge = $("#ul" + idString)).length)){
+    if (!((edge = $("#ul" + idString)).length)){
         if (!((edge = $("#uln" + end + "-n" + start)).length)) {
             return $("#dl" + idString).css("stroke")
         }
