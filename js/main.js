@@ -10,7 +10,7 @@ var autoGenerateRandomizer = 0;
 
 var algorithm;
 var interpreter = new BiwaScheme.Interpreter(function(e) {
-    console.error(e.message);
+  console.error(e.message);
 });
 var stepNumber = -1;
 
@@ -27,31 +27,31 @@ generateMSTGraph(graphArea);
 
 // initialize with leader elect
 $.get('scheme/algs/leader_elect.scm', function(data) {
-    editor.getDoc().setValue(';;; Scheme code editor ;;;\n'+data);
+  editor.getDoc().setValue(';;; Scheme code editor ;;;\n' + data);
 });
 
 function reset() {
-    stepToInitialState();
-    currentStep = 0;
-    $("#stepCounter").text(0);
-    stepHistory = [];
-    stepNumber = 0;
-    endReached = false;
-    playing = false;
+  stepToInitialState();
+  currentStep = 0;
+  $("#stepCounter").text(0);
+  stepHistory = [];
+  stepNumber = 0;
+  endReached = false;
+  playing = false;
 }
 
 function play() {
-    setInitialState();
-    stepHistory = [];
-    currentStep = 0;
-    stepNumber = -1;
+  setInitialState();
+  stepHistory = [];
+  currentStep = 0;
+  stepNumber = -1;
 
-    algorithm = new Algorithm({
-        code: editor.getDoc().getValue(),
-        rounds: $("#noRounds").val(),
-        start: $("#algorithmStartNode").val(),
-    });
+  algorithm = new Algorithm({
+    code: editor.getDoc().getValue(),
+    rounds: $("#noRounds").val(),
+    start: $("#algorithmStartNode").val(),
+  });
 
-    algorithm.compute();
+  algorithm.compute();
 }
 
