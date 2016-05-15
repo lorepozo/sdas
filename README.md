@@ -1,5 +1,7 @@
 # Synchronous Distributed Algorithm Simulator (SDAS)
 
+![screenshot](screenshot.png)
+
 ## Installation
 
 ```sh
